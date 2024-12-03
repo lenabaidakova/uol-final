@@ -1,5 +1,5 @@
 import {Home, User, CirclePlus, ChartColumnIncreasing, Handshake} from 'lucide-react';
-
+import {Text} from '@radix-ui/themes';
 import {
   Sidebar,
   SidebarContent,
@@ -51,9 +51,9 @@ export default function AppSidebar() {
               <RouterLink href="/">
                 <>
                   <div className="flex aspect-square size-7 items-center justify-center rounded-lg text-sidebar-primary-foreground">
-                   <div className="text-green-600">
+                   <Text color="grass">
                      <Handshake size={20} />
-                   </div>
+                   </Text>
                   </div>
                   <span className="font-bold text-lg">Shelter connect</span>
                 </>
