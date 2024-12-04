@@ -11,10 +11,12 @@ import {
   SidebarMenu, SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
+    SidebarFooter
 } from '@/components/ui/sidebar';
 import * as React from 'react';
 import RouterLink from 'next/link';
 import {useRole} from "@/providers/RoleProvider";
+import {SidebarUser} from "@/app/ui/SidebarUser";
 
 // Menu items.
 const shelterItems = [
@@ -25,7 +27,7 @@ const shelterItems = [
   },
   {
     title: 'Requests',
-    url: '/requests',
+    url: '/shelter/requests',
     icon: ListChecks,
   },
   {
@@ -121,6 +123,9 @@ export default function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <SidebarUser user={{name: 'Paws and Claws Shelter', avatar: 'https://robohash.org/XPL.png?set=set4', email: 'sarah@paws.com'}} />
+      </SidebarFooter>
     </Sidebar>
   );
 }
