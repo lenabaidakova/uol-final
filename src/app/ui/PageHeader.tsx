@@ -28,7 +28,7 @@ export default function PageHeader({
           {(children || heading) && (
             <Flex gap="3" align="center" justify="start">
               {!!backLink && (
-                <IconButton variant="ghost" asChild>
+                <IconButton color="gray" variant="ghost" asChild>
                   <RouterLink href={backLink}>
                     <ArrowLeftIcon size={16} />
                   </RouterLink>

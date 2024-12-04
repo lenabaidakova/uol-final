@@ -36,51 +36,40 @@ import {
 } from "@/components/ui/table"
 import {Badge, Link} from '@radix-ui/themes';
 
-const data: Payment[] = [
+const data: Request[] = [
     {
         title: "Cleaning supplies needed",
-        shelterName: "Paws and Claws Shelter",
         status: "open",
         location: "Central London",
         urgency: "high",
     },
     {
         title: "Volunteers for weekend shift",
-        shelterName: "Paws and Claws Shelter",
         status: "open",
         location: "South Birmingham",
         urgency: "medium",
     },
     {
         title: "Dog Food Needed",
-        shelterName: "Paws and Claws Shelter",
         status: "open",
         location: "North Manchester",
         urgency: "low",
     },
 ]
 
-export type Payment = {
+export type Request = {
     title: string
-    shelterName: string
     location: string
     urgency: "high" | 'low' | 'medium'
     status: "open"
 }
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Request>[] = [
     {
         accessorKey: "title",
         header: "Title",
         cell: ({ row }) => (
             <Link color="gray" href="/request/1">{row.getValue("title")}</Link>
-        ),
-    },
-    {
-        accessorKey: "shelterName",
-        header: "Shelter name",
-        cell: ({ row }) => (
-            <div>{row.getValue("shelterName")}</div>
         ),
     },
     {

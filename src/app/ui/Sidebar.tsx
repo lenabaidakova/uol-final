@@ -39,11 +39,6 @@ const shelterItems = [
     url: '#',
     icon: MessageCircle,
   },
-  {
-    title: 'Profile',
-    url: '/profile',
-    icon: User,
-  },
 ];
 
 const supporterItems = [
@@ -61,12 +56,7 @@ const supporterItems = [
     title: 'Messages',
     url: '#',
     icon: MessageCircle,
-  },
-  {
-    title: 'Profile',
-    url: '/profile',
-    icon: User,
-  },
+  }
 ];
 
 export default function AppSidebar() {
