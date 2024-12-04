@@ -1,6 +1,6 @@
 "use client";
 
-import {Home, User, CirclePlus, ChartColumnIncreasing, Handshake, MessageCircle, ListChecks} from 'lucide-react';
+import {Home, User, ChartColumnIncreasing, Handshake, MessageCircle, ListChecks} from 'lucide-react';
 import {Text} from '@radix-ui/themes';
 import {
   Sidebar,
@@ -18,7 +18,6 @@ import RouterLink from 'next/link';
 import {useRole} from "@/providers/RoleProvider";
 import {SidebarUser} from "@/app/ui/SidebarUser";
 
-// Menu items.
 const shelterItems = [
   {
     title: 'Home',
