@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-query';
 import { ThemeProvider } from 'next-themes';
 import { Theme } from '@radix-ui/themes';
+import {RoleProvider} from "@/providers/RoleProvider";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,11 +21,11 @@ const queryClient = new QueryClient({
 export function ClientProviders({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider attribute="class">
-        <Theme accentColor="grass" grayColor="olive">
+      <Theme accentColor="grass">
+        <RoleProvider>
           {children}
-        </Theme>
-      </ThemeProvider>
+        </RoleProvider>
+      </Theme>
     </QueryClientProvider>
   );
 }

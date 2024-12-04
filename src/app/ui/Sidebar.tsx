@@ -1,3 +1,5 @@
+"use client";
+
 import {Home, User, CirclePlus, ChartColumnIncreasing, Handshake, MessageCircle, ListChecks} from 'lucide-react';
 import {Text} from '@radix-ui/themes';
 import {
@@ -12,9 +14,10 @@ import {
 } from '@/components/ui/sidebar';
 import * as React from 'react';
 import RouterLink from 'next/link';
+import {useRole} from "@/providers/RoleProvider";
 
 // Menu items.
-const items = [
+const shelterItems = [
   {
     title: 'Home',
     url: '/',
@@ -47,7 +50,34 @@ const items = [
   },
 ];
 
+const supporterItems = [
+  {
+    title: 'Home',
+    url: '/',
+    icon: Home,
+  },
+  {
+    title: 'Requests',
+    url: '/requests',
+    icon: ListChecks,
+  },
+  {
+    title: 'Messages',
+    url: '#',
+    icon: MessageCircle,
+  },
+  {
+    title: 'Profile',
+    url: '/profile',
+    icon: User,
+  },
+];
+
 export default function AppSidebar() {
+  const { role, setRole } = useRole();
+
+  const items = role === 'shelter' ? shelterItems : supporterItems;
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
