@@ -34,7 +34,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import {Badge} from '@radix-ui/themes';
+import {Badge, Link} from '@radix-ui/themes';
 
 const data: Payment[] = [
     {
@@ -73,7 +73,7 @@ export const columns: ColumnDef<Payment>[] = [
         accessorKey: "title",
         header: "Title",
         cell: ({ row }) => (
-            <div>{row.getValue("title")}</div>
+            <Link color="gray" href="/request/1">{row.getValue("title")}</Link>
         ),
     },
     {

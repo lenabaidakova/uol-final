@@ -1,4 +1,4 @@
-import {Home, User, CirclePlus, ChartColumnIncreasing, Handshake} from 'lucide-react';
+import {Home, User, CirclePlus, ChartColumnIncreasing, Handshake, MessageCircle, ListChecks} from 'lucide-react';
 import {Text} from '@radix-ui/themes';
 import {
   Sidebar,
@@ -6,7 +6,7 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
-  SidebarMenu,
+  SidebarMenu, SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
@@ -22,13 +22,23 @@ const items = [
   },
   {
     title: 'Create request',
-    url: '#',
+    url: '/request/create',
     icon: CirclePlus,
+  },
+  {
+    title: 'Requests',
+    url: '/requests',
+    icon: ListChecks,
   },
   {
     title: 'Dashboard',
     url: '#',
     icon: ChartColumnIncreasing,
+  },
+  {
+    title: 'Messages',
+    url: '#',
+    icon: MessageCircle,
   },
   {
     title: 'Profile',
@@ -74,6 +84,12 @@ export default function AppSidebar() {
                       <span>{item.title}</span>
                     </a>
                   </SidebarMenuButton>
+
+                  {
+                      item.title === 'Messages' && (
+                          <SidebarMenuBadge>3</SidebarMenuBadge>
+                      )
+                  }
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
