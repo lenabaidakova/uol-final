@@ -6,7 +6,7 @@ import RequestsTable from "@/app/ui/RequestsTable";
 export default function Home() {
   return (
     <MainLayout>
-        <PageHeader heading="Active requests" columns="auto 1fr" />
+        <PageHeader heading="Requests" columns="auto 1fr" />
 
         <Box maxWidth="1400px" m="auto" px="4">
             <RequestsTable />

@@ -24,11 +24,6 @@ const shelterItems = [
     icon: Home,
   },
   {
-    title: 'Create request',
-    url: '/request/create',
-    icon: CirclePlus,
-  },
-  {
     title: 'Requests',
     url: '/requests',
     icon: ListChecks,
