@@ -25,7 +25,7 @@ export default function PageHeader({
       <header className="sticky top-0 z-50 w-full border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/95">
         <Grid p="2" columns={columns} align="center">
           <SidebarTrigger className="mr-2" />
-          {children && (
+          {(children || heading) && (
             <Flex gap="3" align="center" justify="start">
               {!!backLink && (
                 <IconButton variant="ghost" asChild>

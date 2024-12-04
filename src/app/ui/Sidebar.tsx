@@ -51,11 +51,11 @@ export default function AppSidebar() {
               <RouterLink href="/">
                 <>
                   <div className="flex aspect-square size-7 items-center justify-center rounded-lg text-sidebar-primary-foreground">
-                   <Text color="grass">
+                   <Text color="gray">
                      <Handshake size={20} />
                    </Text>
                   </div>
-                  <span className="font-bold text-lg">Shelter connect</span>
+                  <span className="font-bold text-l">Shelter connect</span>
                 </>
               </RouterLink>
             </SidebarMenuButton>
