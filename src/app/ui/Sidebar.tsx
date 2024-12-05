@@ -30,12 +30,7 @@ const shelterItems = [
     icon: ListChecks,
   },
   {
-    title: 'Dashboard',
-    url: '#',
-    icon: ChartColumnIncreasing,
-  },
-  {
-    title: 'Messages',
+    title: 'New messages',
     url: '#',
     icon: MessageCircle,
   },
