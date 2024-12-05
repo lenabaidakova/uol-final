@@ -3,9 +3,9 @@ import {Box, Grid} from "@radix-ui/themes";
 import {Card, CardHeader, CardTitle, CardContent, CardDescription} from "@/components/ui/card";
 import {Check, Clipboard, MessageCircle} from "lucide-react";
 import {DatePickerWithRange} from "@/app/ui/DatePickerWithRange";
-import {RequestsChart} from "@/app/ui/RequestsChart";
 import React from "react";
 import {SupporterRequestsInProgress} from "@/app/ui/SupporterRequestsInProgress";
+import SupporterRequestsSuggested from "@/app/ui/SupporterRequestsSuggested";
 
 export default function SupporterDashboard() {
     return (
@@ -54,9 +54,9 @@ export default function SupporterDashboard() {
                     <Box>
                         <Card>
                             <CardHeader>
-                                <CardTitle>Recently contributed</CardTitle>
+                                <CardTitle>Recently in progress</CardTitle>
                                 <CardDescription>
-                                    See your latest contributions and the impact you’ve made
+                                    Track the latest contributions you’re actively working on
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
@@ -66,7 +66,17 @@ export default function SupporterDashboard() {
                     </Box>
 
                     <Box>
-                        <RequestsChart />
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Suggested requests</CardTitle>
+                                <CardDescription>
+                                    Check out open requests from shelters needing support
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <SupporterRequestsSuggested />
+                            </CardContent>
+                        </Card>
                     </Box>
                 </Grid>
             </Box>

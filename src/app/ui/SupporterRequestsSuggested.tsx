@@ -6,36 +6,43 @@ import {
 
 const items = [
     {
-        id: 'ip1',
-        request: 'Blankets for winter',
+        id: 'rte1',
+        request: 'Food donations for winter',
         shelter: 'Happy Paws Shelter',
         initials: 'HP',
-        date: 'Due on Dec 4',
+        date: 'Due Dec 25',
     },
     {
-        id: 'ip2',
-        request: 'Emergency vet care for injured puppy',
+        id: 'rte2',
+        request: 'Vet assistance for injured cat',
         shelter: 'Kind Hearts Shelter',
         initials: 'KH',
-        date: 'Due on Dec 3',
+        date: 'Due Dec 24',
     },
     {
-        id: 'ip3',
-        request: 'Food supplies for stray cats',
-        shelter: 'Paws & Claws Shelter',
-        initials: 'PC',
-        date: 'Due on Dec 2',
-    },
-    {
-        id: 'ip4',
-        request: 'Toys and treats for shelter dogs',
+        id: 'rte3',
+        request: 'Blankets for shelter dogs',
         shelter: 'Safe Haven Shelter',
         initials: 'SH',
-        date: 'Due on Dec 1',
+        date: 'Due Dec 20',
+    },
+    {
+        id: 'rte4',
+        request: 'Heating support for shelter',
+        shelter: 'Warm Hearts Shelter',
+        initials: 'WH',
+        date: 'Due Dec 21',
+    },
+    {
+        id: 'rte5',
+        request: 'Cat litter supplies',
+        shelter: 'Paws & Claws Shelter',
+        initials: 'PC',
+        date: 'Due Dec 20',
     },
 ];
 
-export function SupporterRequestsInProgress() {
+export default function SupporterRequestsSuggested() {
     return (
         <div className="space-y-8">
             {
