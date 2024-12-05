@@ -9,11 +9,14 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import {ChatCard} from "@/app/request/[:id]/ui/Chat";
+import {DropdownActions} from "@/app/request/[:id]/ui/ui/DropdownActions";
 
 export default function RequestView() {
     return (
         <MainLayout>
-            <PageHeader heading="Request details" columns="auto 1fr" backLink="/" />
+            <PageHeader heading="Request details" columns="auto 1fr auto" backLink="/" actions={<DropdownActions />}>
+                <Badge color="orange">In progress</Badge>
+            </PageHeader>
 
             <Box maxWidth="800px" m="auto" px="4">
                 <div className="max-w-4xl mx-auto p-6">

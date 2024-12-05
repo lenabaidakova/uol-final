@@ -13,13 +13,13 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import { ChevronDown, MoreHorizontal } from "lucide-react"
+import {Check, ChevronDown, MoreHorizontal, Pencil, Trash} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
-    DropdownMenuContent,
+    DropdownMenuContent, DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
@@ -39,7 +39,7 @@ import {Badge, Link} from '@radix-ui/themes';
 const data: Request[] = [
     {
         title: "Cleaning supplies needed",
-        status: "open",
+        status: "in progress",
         location: "Central London",
         urgency: "high",
     },
@@ -61,7 +61,7 @@ export type Request = {
     title: string
     location: string
     urgency: "high" | 'low' | 'medium'
-    status: "open"
+    status: "open" | 'in progress'
 }
 
 export const columns: ColumnDef<Request>[] = [
@@ -113,15 +113,21 @@ export const columns: ColumnDef<Request>[] = [
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(payment.id)}
-                        >
-                            Copy payment ID
-                        </DropdownMenuItem>
+                        <DropdownMenuGroup>
+                            <DropdownMenuItem>
+                                <Check />
+                                Close
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <Pencil />
+                                Edit
+                            </DropdownMenuItem>
+                        </DropdownMenuGroup>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>View customer</DropdownMenuItem>
-                        <DropdownMenuItem>View payment details</DropdownMenuItem>
+                        <DropdownMenuItem className="text-red-700">
+                            <Trash />
+                            Remove
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )
@@ -162,9 +168,9 @@ export default function RequestsTableShelter() {
             <div className="flex items-center py-4">
                 <Input
                     placeholder="Search requests by keyword (e.g., cleaning supplies, Bristol)..."
-                    value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+                    value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
                     onChange={(event) =>
-                        table.getColumn("email")?.setFilterValue(event.target.value)
+                        table.getColumn("title")?.setFilterValue(event.target.value)
                     }
                     className="max-w-[500px]"
                 />
