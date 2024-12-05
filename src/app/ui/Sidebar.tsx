@@ -30,7 +30,7 @@ const shelterItems = [
     icon: ListChecks,
   },
   {
-    title: 'New messages',
+    title: 'Unread messages',
     url: '#',
     icon: MessageCircle,
   },
@@ -48,7 +48,7 @@ const supporterItems = [
     icon: ListChecks,
   },
   {
-    title: 'Messages',
+    title: 'Unread messages',
     url: '#',
     icon: MessageCircle,
   }
@@ -97,8 +97,8 @@ export default function AppSidebar() {
                   </SidebarMenuButton>
 
                   {
-                      item.title === 'Messages' && (
-                          <SidebarMenuBadge>3</SidebarMenuBadge>
+                      item.title === 'Unread messages' && (
+                          <SidebarMenuBadge>5</SidebarMenuBadge>
                       )
                   }
                 </SidebarMenuItem>
