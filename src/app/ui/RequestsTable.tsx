@@ -40,7 +40,7 @@ const data: Payment[] = [
     {
         title: "Cleaning supplies needed",
         shelterName: "Paws and Claws Shelter",
-        status: "open",
+        status: "In progress",
         location: "Central London",
         urgency: "high",
     },
@@ -65,7 +65,7 @@ export type Payment = {
     shelterName: string
     location: string
     urgency: "high" | 'low' | 'medium'
-    status: "open"
+    status: "open" | 'in progress'
 }
 
 export const columns: ColumnDef<Payment>[] = [

@@ -34,7 +34,7 @@ export function ChatCard() {
                     <CardTitle>
                         Discuss this request
                     </CardTitle>
-                    <CardDescription>Sara Smith</CardDescription>
+                    <CardDescription>Alex Johnson</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">

@@ -44,7 +44,7 @@ const supporterItems = [
   },
   {
     title: 'Requests',
-    url: '/requests',
+    url: '/supporter/requests',
     icon: ListChecks,
   },
   {
@@ -57,7 +57,8 @@ const supporterItems = [
 export default function AppSidebar() {
   const { role, setRole } = useRole();
 
-  const items = role === 'shelter' ? shelterItems : supporterItems;
+  const isShelter = role === 'shelter';
+  const items = isShelter ? shelterItems : supporterItems;
 
   return (
     <Sidebar collapsible="icon">
@@ -108,7 +109,12 @@ export default function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarUser user={{name: 'Paws and Claws Shelter', avatar: 'https://robohash.org/XPL.png?set=set4', email: 'sarah@paws.com'}} />
+        {
+          isShelter
+              ? (<SidebarUser user={{name: 'Paws and Claws Shelter', avatar: 'https://robohash.org/XPL.png?set=set4', email: 'sarah@paws.com'}} />)
+              : (<SidebarUser user={{name: 'Alex Johnson', avatar: 'https://robohash.org/aj.png?set=set4', email: 'alex@email.com'}} />)
+        }
+
       </SidebarFooter>
     </Sidebar>
   );
