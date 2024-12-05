@@ -6,7 +6,7 @@ import {NewRequestForm} from "@/app/request/create/ui/NewRequestForm";
 export default function NewRequest() {
     return (
         <MainLayout>
-            <PageHeader heading="New request" columns="auto 1fr" backLink="/requests" />
+            <PageHeader heading="New request" columns="auto 1fr" backLink="/shelter/requests" />
 
             <Box maxWidth="1400px" m="auto" px="4">
                 <NewRequestForm />

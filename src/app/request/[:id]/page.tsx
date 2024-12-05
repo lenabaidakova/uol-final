@@ -14,7 +14,7 @@ import {DropdownActions} from "@/app/request/[:id]/ui/ui/DropdownActions";
 export default function RequestView() {
     return (
         <MainLayout>
-            <PageHeader heading="Request details" columns="auto 1fr auto" backLink="/" actions={<DropdownActions />}>
+            <PageHeader heading="Request details" columns="auto 1fr auto" backLink="/shelter/requests" actions={<DropdownActions />}>
                 <Badge color="orange">In progress</Badge>
             </PageHeader>
 
