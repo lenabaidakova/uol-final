@@ -31,7 +31,7 @@ const shelterItems = [
   },
   {
     title: 'Unread messages',
-    url: '#',
+    url: '/unread',
     icon: MessageCircle,
   },
 ];
@@ -49,7 +49,7 @@ const supporterItems = [
   },
   {
     title: 'Unread messages',
-    url: '#',
+    url: '/unread',
     icon: MessageCircle,
   }
 ];
