@@ -15,7 +15,7 @@ interface RoleProviderProps {
 }
 
 export const RoleProvider: React.FC<RoleProviderProps> = ({ children }) => {
-    const [role, setRole] = useState<Role>("shelter");
+    const [role, setRole] = useState<Role>("supporter");
 
     return (
         <RoleContext.Provider value={{ role, setRole }}>
