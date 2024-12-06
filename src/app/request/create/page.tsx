@@ -8,7 +8,7 @@ export default function NewRequest() {
         <MainLayout>
             <PageHeader heading="New request" columns="auto 1fr" backLink="/shelter/requests" />
 
-            <Box maxWidth="1400px" m="auto" px="4">
+            <Box maxWidth="600px" m="auto" px="4">
                 <NewRequestForm />
             </Box>
         </MainLayout>
