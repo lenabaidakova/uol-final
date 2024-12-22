@@ -1,0 +1,31 @@
+.input {
+  /* fix input shadow cutting */
+  padding-left: 1px;
+}
+
+.input_invalid {
+  .input__field {
+  }
+}
+
+.input__error {
+  margin-top: 4px;
+}
+
+.input__helper-text {
+  margin-top: 4px;
+}
+
+.input_align_center {
+  input {
+    text-align: center;
+  }
+}
+
+.input_type_ghost {
+  .input__control {
+    transition: all;
+    transition-duration: 700ms;
+    background: transparent;
+  }
+}

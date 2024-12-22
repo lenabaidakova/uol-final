@@ -1,0 +1,24 @@
+.select-field__label {
+  display: inline-flex;
+  font-size: 13px;
+  margin-bottom: 4px;
+  color: var(--mauve-12);
+}
+
+.select-field__error {
+  margin-top: 4px;
+}
+
+.select-field__trigger {
+  width: 100%;
+}
+
+.select-field__loading-icon {
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(1turn);
+  }
+}
