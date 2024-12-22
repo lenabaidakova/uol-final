@@ -63,6 +63,7 @@ export default function RegisterPage() {
               errorMessage={errors.username?.message}
               required
               {...register('username')}
+              data-testid="username-input"
             />
 
             <Input
@@ -71,6 +72,7 @@ export default function RegisterPage() {
               errorMessage={errors.password?.message}
               required
               {...register('password')}
+              data-testid="password-input"
             />
 
             <Controller
@@ -83,13 +85,14 @@ export default function RegisterPage() {
                   label="Role"
                   placeholder="Pick role"
                   required
+                  dataTestId="role-select"
                 />
               )}
               control={control}
               name="role"
             />
 
-            {!!error && <ErrorApi error={error} />}
+            {!!error && <ErrorApi error={error} data-testid="error-message" />}
           </Flex>
 
           <Box mt="4">
@@ -99,6 +102,7 @@ export default function RegisterPage() {
               loading={isMutating}
               variant="soft"
               className="w-full"
+              data-testid="submit-button"
             >
               Create account
             </Button>
