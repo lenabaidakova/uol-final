@@ -1,22 +1,30 @@
-"use client";
+'use client';
 
-import {Home, User, ChartColumnIncreasing, Handshake, MessageCircle, ListChecks} from 'lucide-react';
-import {Text} from '@radix-ui/themes';
+import {
+  Home,
+  User,
+  ChartColumnIncreasing,
+  Handshake,
+  MessageCircle,
+  ListChecks,
+} from 'lucide-react';
+import { Text } from '@radix-ui/themes';
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
-  SidebarMenu, SidebarMenuBadge,
+  SidebarMenu,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
-    SidebarFooter
+  SidebarFooter,
 } from '@/components/ui/sidebar';
 import * as React from 'react';
 import RouterLink from 'next/link';
-import {useRole} from "@/providers/RoleProvider";
-import {SidebarUser} from "@/app/ui/SidebarUser";
+import { useRole } from '@/providers/RoleProvider';
+import { SidebarUser } from '@/app/ui/SidebarUser';
 
 const shelterItems = [
   {
@@ -51,7 +59,7 @@ const supporterItems = [
     title: 'Unread messages',
     url: '/unread',
     icon: MessageCircle,
-  }
+  },
 ];
 
 export default function AppSidebar() {
@@ -73,9 +81,9 @@ export default function AppSidebar() {
               <RouterLink href="/">
                 <>
                   <div className="flex aspect-square size-7 items-center justify-center rounded-lg text-sidebar-primary-foreground">
-                   <Text color="gray">
-                     <Handshake size={20} />
-                   </Text>
+                    <Text color="gray">
+                      <Handshake size={20} />
+                    </Text>
                   </div>
                   <span className="font-bold text-l">Shelter connect</span>
                 </>
@@ -97,11 +105,9 @@ export default function AppSidebar() {
                     </a>
                   </SidebarMenuButton>
 
-                  {
-                      item.title === 'Unread messages' && (
-                          <SidebarMenuBadge>5</SidebarMenuBadge>
-                      )
-                  }
+                  {item.title === 'Unread messages' && (
+                    <SidebarMenuBadge>5</SidebarMenuBadge>
+                  )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -109,12 +115,23 @@ export default function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        {
-          isShelter
-              ? (<SidebarUser user={{name: 'Paws and Claws Shelter', avatar: 'https://robohash.org/XPL.png?set=set4', email: 'sarah@paws.com'}} />)
-              : (<SidebarUser user={{name: 'Alex Johnson', avatar: 'https://robohash.org/aj.png?set=set4', email: 'alex@email.com'}} />)
-        }
-
+        {isShelter ? (
+          <SidebarUser
+            user={{
+              name: 'Paws and Claws Shelter',
+              avatar: 'https://robohash.org/XPL.png?set=set4',
+              email: 'sarah@paws.com',
+            }}
+          />
+        ) : (
+          <SidebarUser
+            user={{
+              name: 'Alex Johnson',
+              avatar: 'https://robohash.org/aj.png?set=set4',
+              email: 'alex@email.com',
+            }}
+          />
+        )}
       </SidebarFooter>
     </Sidebar>
   );
