@@ -10,9 +10,7 @@ describe('/api/register', () => {
 
     expect(response.status).toBe(400);
     const body = await response.json();
-    expect(body.message).toBe(
-      'Username, password and role are required fields'
-    );
+    expect(body.message).toBe('Email, password, and role are required fields');
   });
 
   it('should return 400 for an invalid role', async () => {
@@ -20,7 +18,7 @@ describe('/api/register', () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        username: 'testuser',
+        email: 'user@example.com',
         password: 'password123',
         role: 'INVALID_ROLE',
       }),
@@ -31,12 +29,28 @@ describe('/api/register', () => {
     expect(body.message).toBe('Role should be supporter or shelter');
   });
 
+  it('should return 400 if email is already registered', async () => {
+    const response = await fetch('/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: 'existing@example.com',
+        password: 'password123',
+        role: 'SUPPORTER',
+      }),
+    });
+
+    expect(response.status).toBe(400);
+    const body = await response.json();
+    expect(body.message).toBe('Email is already registered');
+  });
+
   it('should return 201 if registration is successful', async () => {
     const response = await fetch('/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        username: 'testuser',
+        email: 'newuser@example.com',
         password: 'password123',
         role: 'SUPPORTER',
       }),
@@ -44,11 +58,8 @@ describe('/api/register', () => {
 
     expect(response.status).toBe(201);
     const body = await response.json();
-    expect(body.message).toBe('User registered successfully');
-    expect(body.user).toEqual({
-      id: '1',
-      username: 'testuser',
-      role: 'SUPPORTER',
-    });
+    expect(body.message).toBe(
+      'Registration successful. Please check your email to confirm your account.'
+    );
   });
 });

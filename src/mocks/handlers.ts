@@ -1,31 +1,27 @@
-// msw API mocking setup
-
 import { http, HttpResponse } from 'msw';
 import { User } from '@prisma/client';
 
-type RegisterRequestBody = Pick<User, 'username' | 'password' | 'role'>;
+type RegisterRequestBody = Pick<User, 'email' | 'password' | 'role'>;
 
 type RegisterResponseBody = {
   message: string;
-  user?: Pick<User, 'id' | 'username' | 'role'>;
+  user?: Pick<User, 'id' | 'email' | 'role'>;
 };
 
 type EmptyParams = {};
 
 export const handlers = [
-  // registration endpoint mock
   http.post<
     EmptyParams,
     RegisterRequestBody,
     RegisterResponseBody,
     '/api/register'
   >('/api/register', async ({ request }) => {
-    const { username, password, role } = await request.json();
+    const { email, password, role } = await request.json();
 
-    // check required fields
-    if (!username || !password || !role) {
+    if (!email || !password || !role) {
       return HttpResponse.json(
-        { message: 'Username, password and role are required fields' },
+        { message: 'Email, password, and role are required fields' },
         { status: 400 }
       );
     }
@@ -37,11 +33,20 @@ export const handlers = [
       );
     }
 
-    // successful response
+    if (email === 'existing@example.com') {
+      return HttpResponse.json(
+        { message: 'Email is already registered' },
+        { status: 400 }
+      );
+    }
+
+    const confirmationToken = 'mock-confirmation-token';
+
     return HttpResponse.json(
       {
-        message: 'User registered successfully',
-        user: { id: '1', username, role },
+        message:
+          'Registration successful. Please check your email to confirm your account.',
+        user: { id: '1', email, role },
       },
       { status: 201 }
     );

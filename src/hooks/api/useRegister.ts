@@ -4,7 +4,8 @@ import type { MutationOptions } from '@/types/Api';
 import { RoleType } from '@/types/RoleType';
 
 export type RegistrationData = {
-  username: string;
+  email: string;
+  name: string;
   password: string;
   role: RoleType;
 };
@@ -13,7 +14,8 @@ export type RegistrationResponse = {
   message: string;
   user?: {
     id: string;
-    username: string;
+    name: string;
+    email: string;
     role: RoleType;
   };
 };

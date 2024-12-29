@@ -2,6 +2,8 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+Node v18.19.0
+
 First, run the development server:
 
 ```bash
@@ -47,4 +49,14 @@ npx prisma studio
 npx prisma migrate dev --name name
 npx prisma generate
 ```
+
+
+Emails
+
+```shell
+brew install mailhog
+mailhog
+```
+
+
 

@@ -10,6 +10,8 @@ import { ROLES } from '@/constants/Role';
 import { SelectField } from '@/app/ui/SelectField';
 import { Box, Button, Card, Flex, Heading, Link, Text } from '@radix-ui/themes';
 import { ErrorApi } from '@/app/ui/ErrorApi';
+import { useState } from 'react';
+import { Callout } from '@/app/ui/Callout';
 
 const ROLE_OPTIONS = [
   {
@@ -24,8 +26,9 @@ const ROLE_OPTIONS = [
 
 // schema for form validation
 const registrationSchema = z.object({
-  username: z.string().min(3, 'Username must be at least 3 characters'),
-  password: z.string().min(6, 'Password must be at least 5 characters'),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  name: z.string().min(5, 'Password must be at least 5 characters'),
   role: z.enum([ROLES.SUPPORTER, ROLES.SHELTER], {
     message: 'Role is required',
   }),
@@ -34,7 +37,8 @@ const registrationSchema = z.object({
 type RegistrationFormData = z.infer<typeof registrationSchema>;
 
 export default function RegisterPage() {
-  const router = useRouter();
+  const [isConfirmationSent, setIsConfirmationSent] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -45,25 +49,54 @@ export default function RegisterPage() {
   });
 
   const { mutate, isMutating, error } = useRegister({
-    onSuccess: () => router.push('/'),
+    onSuccess: () => {
+      setIsConfirmationSent(true);
+    },
   });
 
   const onSubmit = (data: RegistrationFormData) => {
     mutate(data);
   };
 
+  if (isConfirmationSent) {
+    return (
+      <Box m="auto" maxWidth="460px" py="3" px="2" mt="4">
+        <Card size="4" variant="classic">
+          <Heading mb="3">Confirm email</Heading>
+
+          <Box>
+            <Callout color="grass">
+              Please check your email for a confirmation link to activate your
+              account.
+            </Callout>
+          </Box>
+        </Card>
+      </Box>
+    );
+  }
+
   return (
     <Box m="auto" maxWidth="460px" py="3" px="2" mt="4">
       <Card size="4" variant="classic">
         <Heading mb="3">Create an account</Heading>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Flex gap="3" direction="column">
             <Input
-              label="Username"
-              errorMessage={errors.username?.message}
+              label="Name"
+              errorMessage={errors.email?.message}
               required
-              {...register('username')}
-              data-testid="username-input"
+              {...register('name')}
+              data-testid="name-input"
+            />
+
+            <Input
+              label="Email"
+              type="email"
+              errorMessage={errors.email?.message}
+              required
+              {...register('email')}
+              data-testid="email-input"
             />
 
             <Input
@@ -95,7 +128,7 @@ export default function RegisterPage() {
             {!!error && <ErrorApi error={error} data-testid="error-message" />}
           </Flex>
 
-          <Box mt="4">
+          <Box mt="5">
             <Button
               type="submit"
               size="3"
