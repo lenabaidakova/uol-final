@@ -3,8 +3,6 @@
 import React from 'react';
 import { Flex, DataList, Card, Skeleton, Text, Box } from '@radix-ui/themes';
 import { AccountRenamePopup } from './AccountRenamePopup';
-// import { AccountEmailUpdatePopup } from './AccountEmailUpdatePopup';
-// import { PasswordResetPopup } from './PasswordResetPopup';
 import PageHeader from '@/app/ui/PageHeader';
 import { useSession } from 'next-auth/react';
 
