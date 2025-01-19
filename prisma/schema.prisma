@@ -27,7 +27,7 @@ model Request {
   dueDate     DateTime?
   details     String
   location    String
-  status      String   @default("PENDING") // PENDING, IN_PROGRESS, or COMPLETED
+  status      String   @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED, ARCHIVED
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
