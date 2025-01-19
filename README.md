@@ -50,6 +50,11 @@ npx prisma migrate dev --name name
 npx prisma generate
 ```
 
+Seed data
+
+```shell
+npx prisma db seed
+```
 
 Emails
 

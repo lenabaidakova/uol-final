@@ -3,7 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcrypt';
 
-const handler = NextAuth({
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -35,7 +35,7 @@ const handler = NextAuth({
           throw new Error('Email not verified. Please check your inbox.');
         }
 
-        return { id: user.id, email: user.email, name: user.name };
+        return { id: user.id, email: user.email, name: user.name, role: user.role };
       },
     }),
   ],
@@ -49,13 +49,19 @@ const handler = NextAuth({
         token.id = user.id;
         token.name = user.name;
         token.email = user.email;
+        token.role = user.role;
       }
 
       const updatedUser = await prisma.user.findUnique({
         where: { id: token.id },
       });
-      if (updatedUser && token.name !== updatedUser.name) {
-        token.name = updatedUser.name;
+      if (updatedUser) {
+        if (token.name !== updatedUser.name) {
+          token.name = updatedUser.name;
+        }
+        if (token.role !== updatedUser.role) {
+          token.role = updatedUser.role;
+        }
       }
 
       return token;
@@ -65,6 +71,7 @@ const handler = NextAuth({
         session.user.id = token.id;
         session.user.name = token.name;
         session.user.email = token.email;
+        session.user.role = token.role;
       }
       return session;
     },
@@ -72,6 +79,8 @@ const handler = NextAuth({
   pages: {
     signIn: '/login',
   },
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

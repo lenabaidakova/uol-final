@@ -1,17 +1,51 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PATCH } from '@/app/api/requests/archive/route';
 import prisma from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
 
 vi.mock('@/lib/prisma', () => ({
     default: {
         request: {
             update: vi.fn(),
+            findUnique: vi.fn(),
         },
     },
 }));
 
+vi.mock('next-auth', async (importOriginal) => {
+    const original = await importOriginal();
+    return {
+        ...original,
+        getServerSession: vi.fn(),
+    };
+});
+
 describe('/api/requests/archive', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
+    it('should return 401 if the user is not authenticated', async () => {
+        vi.mocked(getServerSession).mockResolvedValueOnce(null);
+
+        const response = await PATCH(
+            new Request('http://localhost:3000/api/requests/archive', {
+                method: 'PATCH',
+                body: JSON.stringify({ id: 'request-id-123' }),
+                headers: { 'Content-Type': 'application/json' },
+            })
+        );
+
+        const body = await response.json();
+        expect(response.status).toBe(401);
+        expect(body.message).toBe('Unauthorized');
+    });
+
     it('should return 400 if request ID is missing', async () => {
+        vi.mocked(getServerSession).mockResolvedValueOnce({
+            user: { id: 'user-id-123' },
+        });
+
         const response = await PATCH(
             new Request('http://localhost:3000/api/requests/archive', {
                 method: 'PATCH',
@@ -26,9 +60,11 @@ describe('/api/requests/archive', () => {
     });
 
     it('should return 404 if the request is not found', async () => {
-        prisma.request.update.mockRejectedValueOnce({
-            code: 'P2025',
+        vi.mocked(getServerSession).mockResolvedValueOnce({
+            user: { id: 'user-id-123' },
         });
+
+        prisma.request.findUnique.mockResolvedValueOnce(null);
 
         const response = await PATCH(
             new Request('http://localhost:3000/api/requests/archive', {
@@ -43,7 +79,39 @@ describe('/api/requests/archive', () => {
         expect(body.message).toBe('Request not found');
     });
 
+    it('should return 403 if the user is not the creator of the request', async () => {
+        vi.mocked(getServerSession).mockResolvedValueOnce({
+            user: { id: 'user-id-123' },
+        });
+
+        prisma.request.findUnique.mockResolvedValueOnce({
+            id: 'request-id-123',
+            creatorId: 'other-user-id',
+        });
+
+        const response = await PATCH(
+            new Request('http://localhost:3000/api/requests/archive', {
+                method: 'PATCH',
+                body: JSON.stringify({ id: 'request-id-123' }),
+                headers: { 'Content-Type': 'application/json' },
+            })
+        );
+
+        const body = await response.json();
+        expect(response.status).toBe(403);
+        expect(body.message).toBe('Forbidden: You do not have permission to archive this request');
+    });
+
     it('should return 200 if the request is successfully archived', async () => {
+        vi.mocked(getServerSession).mockResolvedValueOnce({
+            user: { id: 'user-id-123' },
+        });
+
+        prisma.request.findUnique.mockResolvedValueOnce({
+            id: 'existing-id',
+            creatorId: 'user-id-123',
+        });
+
         const mockRequest = {
             id: 'existing-id',
             title: 'Need Blankets',
