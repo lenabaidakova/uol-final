@@ -18,3 +18,18 @@ model User {
   updatedAt DateTime @updatedAt
   confirmationToken String?
 }
+
+model Request {
+  id          String   @id @default(cuid())
+  title       String
+  type        String   // SUPPLIES, SERVICES, VOLUNTEERS
+  urgency     String   // HIGH, MEDIUM, LOW
+  dueDate     DateTime?
+  details     String
+  location    String
+  status      String   @default("PENDING") // PENDING, IN_PROGRESS, or COMPLETED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
