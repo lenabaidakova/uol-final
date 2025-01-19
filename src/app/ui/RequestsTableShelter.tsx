@@ -7,12 +7,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import {
-  Check,
-  MoreHorizontal,
-  Pencil,
-  Trash,
-} from 'lucide-react';
+import { Check, MoreHorizontal, Pencil, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -31,10 +26,14 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {Badge, Flex, Link, Text} from '@radix-ui/themes';
+import { Badge, Flex, Link, Text } from '@radix-ui/themes';
 import { useRequestList } from '@/hooks/api/useRequestList';
-import {ErrorApi} from "@/app/ui/ErrorApi";
-import {REQUEST_STATUS_LABELS, URGENCY, URGENCY_LABELS} from "@/constants/Request";
+import { ErrorApi } from '@/app/ui/ErrorApi';
+import {
+  REQUEST_STATUS_LABELS,
+  URGENCY,
+  URGENCY_LABELS,
+} from '@/constants/Request';
 
 export type Request = {
   title: string;
@@ -48,9 +47,9 @@ const columns: ColumnDef<Request>[] = [
     accessorKey: 'title',
     header: 'Title',
     cell: ({ row }) => (
-        <Link color="gray" href={`/request/${row.original.id}`}>
-          {row.getValue('title')}
-        </Link>
+      <Link color="gray" href={`/request/${row.original.id}`}>
+        {row.getValue('title')}
+      </Link>
     ),
   },
   {
@@ -86,12 +85,17 @@ const columns: ColumnDef<Request>[] = [
       const Icon = REQUEST_STATUS_LABELS[status]?.icon;
 
       return (
-          <div className="capitalize">
-            <Flex gap="2" align="center">
-              {Icon && <Text color="gray"><Icon size="18px" /></Text>} {<Text color="gray">{label}</Text>}
-            </Flex>
-          </div>
-      )
+        <div className="capitalize">
+          <Flex gap="2" align="center">
+            {Icon && (
+              <Text color="gray">
+                <Icon size="18px" />
+              </Text>
+            )}{' '}
+            {<Text color="gray">{label}</Text>}
+          </Flex>
+        </div>
+      );
     },
   },
   {
@@ -99,31 +103,31 @@ const columns: ColumnDef<Request>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <Check />
-                  Close
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Pencil />
-                  Edit
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-red-700">
-                <Trash />
-                Remove
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <Check />
+                Close
               </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              <DropdownMenuItem>
+                <Pencil />
+                Edit
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="text-red-700">
+              <Trash />
+              Remove
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       );
     },
   },
@@ -143,88 +147,90 @@ export default function RequestsTableShelter() {
   });
 
   if (isLoading) return <p>Loading...</p>;
-  if (error) return <ErrorApi error={error}/>;
+  if (error) return <ErrorApi error={error} />;
 
   return (
-      <div className="w-full">
-        <div className="flex items-center py-4">
-          <Input
-              placeholder="Search requests by keyword (e.g., cleaning supplies, Bristol)..."
-              onChange={console.log}
-              className="max-w-[500px]"
-          />
-        </div>
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                        <TableHead key={header.id}>
-                          {header.isPlaceholder
-                              ? null
-                              : flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                              )}
-                        </TableHead>
-                    ))}
-                  </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
-                      <TableRow key={row.id}>
-                        {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id}>
-                              {flexRender(
-                                  cell.column.columnDef.cell,
-                                  cell.getContext()
-                              )}
-                            </TableCell>
-                        ))}
-                      </TableRow>
-                  ))
-              ) : (
-                  <TableRow>
-                    <TableCell
-                        colSpan={columns.length}
-                        className="h-24 text-center"
-                    >
-                      No results.
+    <div className="w-full">
+      <div className="flex items-center py-4">
+        <Input
+          placeholder="Search requests by keyword (e.g., cleaning supplies, Bristol)..."
+          onChange={console.log}
+          className="max-w-[500px]"
+        />
+      </div>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
-                  </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
 
-        <div className="flex items-center justify-between space-x-2 py-4">
-          <span className="flex-1 text-sm text-muted-foreground">
-            Page {page} of {Math.ceil(total / limit)}
-          </span>
-          <div className="space-x-2">
-            <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-                disabled={page === 1}
-            >
-              Previous
-            </Button>
-            <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                    setPage((prev) => (prev < Math.ceil(total / limit) ? prev + 1 : prev))
-                }
-                disabled={page >= Math.ceil(total / limit)}
-            >
-              Next
-            </Button>
-          </div>
+      <div className="flex items-center justify-between space-x-2 py-4">
+        <span className="flex-1 text-sm text-muted-foreground">
+          Page {page} of {Math.ceil(total / limit)}
+        </span>
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+            disabled={page === 1}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              setPage((prev) =>
+                prev < Math.ceil(total / limit) ? prev + 1 : prev
+              )
+            }
+            disabled={page >= Math.ceil(total / limit)}
+          >
+            Next
+          </Button>
         </div>
       </div>
+    </div>
   );
 }

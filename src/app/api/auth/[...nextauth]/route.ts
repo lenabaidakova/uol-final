@@ -35,7 +35,12 @@ export const authOptions = {
           throw new Error('Email not verified. Please check your inbox.');
         }
 
-        return { id: user.id, email: user.email, name: user.name, role: user.role };
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+        };
       },
     }),
   ],
