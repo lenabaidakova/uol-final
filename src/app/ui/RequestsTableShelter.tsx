@@ -26,19 +26,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge, Flex, Link, Text } from '@radix-ui/themes';
+import { Badge, Flex, Link, Text, Skeleton } from '@radix-ui/themes';
 import { useRequestList } from '@/hooks/api/useRequestList';
 import { ErrorApi } from '@/app/ui/ErrorApi';
 import {
   REQUEST_STATUS_LABELS,
-  URGENCY,
   URGENCY_LABELS,
+  UrgencyType,
 } from '@/constants/Request';
 
 export type Request = {
   title: string;
   location: string;
-  urgency: URGENCY;
+  urgency: UrgencyType;
   status: 'open' | 'in progress';
 };
 
@@ -146,7 +146,6 @@ export default function RequestsTableShelter() {
     getCoreRowModel: getCoreRowModel(),
   });
 
-  if (isLoading) return <p>Loading...</p>;
   if (error) return <ErrorApi error={error} />;
 
   return (
@@ -177,7 +176,19 @@ export default function RequestsTableShelter() {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              Array.from({ length: limit }).map((_, index) => (
+                <TableRow key={index}>
+                  {columns.map((column) => (
+                    <TableCell key={column.id || column.accessorKey}>
+                      <Flex height="32px" align="center">
+                        <Skeleton loading={true} width="80%" height="16px" />
+                      </Flex>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
