@@ -25,6 +25,7 @@ type FiltersProps = {
 export default function Filters({ setQuery, query }: FiltersProps) {
   const [date, setDate] = React.useState<DateRange | undefined>();
   const [title, setTitle] = React.useState('');
+  const [urgency, setUrgency] = React.useState('');
 
   const debouncedSearch = useDebounceCallback((newText: string) => {
     setQuery({ ...query, text: newText, page: 1 });
@@ -35,9 +36,15 @@ export default function Filters({ setQuery, query }: FiltersProps) {
     debouncedSearch(e.target.value);
   };
 
+  const handleUrgencyChange = (value: string) => {
+    setUrgency(value);
+    setQuery({ ...query, urgency: value, page: 1 });
+  };
+
   const resetAllFilters = () => {
     setDate(undefined);
     setTitle('');
+    setUrgency('');
     const updatedQuery = { page: 1, limit: 5 };
     setQuery(updatedQuery);
   };
@@ -68,7 +75,7 @@ export default function Filters({ setQuery, query }: FiltersProps) {
         </Box>
 
         <Box>
-          <Select onValueChange={console.dir} value={''}>
+          <Select onValueChange={handleUrgencyChange} value={urgency}>
             <SelectTrigger className="w-[160px]">
               <SelectValue placeholder="Filter by urgency" />
             </SelectTrigger>
