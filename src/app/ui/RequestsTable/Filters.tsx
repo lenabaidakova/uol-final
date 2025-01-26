@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { URGENCY } from '@/constants/Request';
+import { REQUEST_STATUS, URGENCY } from '@/constants/Request';
 import { DatePickerWithRange } from '@/app/ui/DatePickerWithRange';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
@@ -26,6 +26,7 @@ export default function Filters({ setQuery, query }: FiltersProps) {
   const [date, setDate] = React.useState<DateRange | undefined>();
   const [title, setTitle] = React.useState('');
   const [urgency, setUrgency] = React.useState('');
+  const [status, setStatus] = React.useState('');
 
   const debouncedSearch = useDebounceCallback((newText: string) => {
     setQuery({ ...query, text: newText, page: 1 });
@@ -41,10 +42,17 @@ export default function Filters({ setQuery, query }: FiltersProps) {
     setQuery({ ...query, urgency: value, page: 1 });
   };
 
+  const handleStatusChange = (value: string) => {
+    setStatus(value);
+    setQuery({ ...query, status: value, page: 1 });
+  };
+
   const resetAllFilters = () => {
     setDate(undefined);
     setTitle('');
     setUrgency('');
+    setStatus('');
+
     const updatedQuery = { page: 1, limit: 5 };
     setQuery(updatedQuery);
   };
@@ -83,6 +91,24 @@ export default function Filters({ setQuery, query }: FiltersProps) {
               <SelectItem value={URGENCY.LOW}>Low</SelectItem>
               <SelectItem value={URGENCY.MEDIUM}>Medium</SelectItem>
               <SelectItem value={URGENCY.HIGH}>High</SelectItem>
+            </SelectContent>
+          </Select>
+        </Box>
+
+        <Box>
+          <Select onValueChange={handleStatusChange} value={status}>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={REQUEST_STATUS.IN_PROGRESS}>
+                In Progress
+              </SelectItem>
+              <SelectItem value={REQUEST_STATUS.PENDING}>Pending</SelectItem>
+              <SelectItem value={REQUEST_STATUS.COMPLETED}>
+                Completed
+              </SelectItem>
+              <SelectItem value={REQUEST_STATUS.ARCHIVED}>Archived</SelectItem>
             </SelectContent>
           </Select>
         </Box>

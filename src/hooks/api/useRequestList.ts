@@ -36,6 +36,7 @@ export type RequestListQuery = {
   dueDateStart?: string;
   dueDateEnd?: string;
   urgency?: string;
+  status?: string;
 };
 
 const fetchRequestList = async (
@@ -48,10 +49,11 @@ const fetchRequestList = async (
     dueDateStart = '',
     dueDateEnd = '',
     urgency = '',
+    status = '',
   } = query;
 
   return apiClient.get('/requests/list', {
-    params: { page, limit, text, dueDateStart, dueDateEnd, urgency },
+    params: { page, limit, text, dueDateStart, dueDateEnd, urgency, status },
   });
 };
 
