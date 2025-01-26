@@ -134,11 +134,19 @@ const columns: ColumnDef<Request>[] = [
 ];
 
 export default function RequestsTableShelter() {
-  const [page, setPage] = React.useState(1);
-  const { requests, total, limit, isLoading, error } = useRequestList({
-    page,
-    limit: 5,
-  });
+  const [query, setQuery] = React.useState({ page: 1, limit: 5 });
+  const { requests, total, limit, isLoading, error } = useRequestList(query);
+
+  const handlePageChange = (newPage: number) => {
+    const updatedQuery = { ...query, page: newPage };
+    setQuery(updatedQuery);
+  };
+
+  const handleSearchChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newText = e.target.value;
+    const updatedQuery = { ...query, text: newText };
+    setQuery(updatedQuery);
+  };
 
   const table = useReactTable({
     data: requests,
@@ -152,8 +160,8 @@ export default function RequestsTableShelter() {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Search requests by keyword (e.g., cleaning supplies, Bristol)..."
-          onChange={console.log}
+          placeholder="Search requests by title..."
+          onChange={handleSearchChange}
           className="max-w-[500px]"
         />
       </div>
@@ -217,14 +225,14 @@ export default function RequestsTableShelter() {
 
       <div className="flex items-center justify-between space-x-2 py-4">
         <span className="flex-1 text-sm text-muted-foreground">
-          Page {page} of {Math.ceil(total / limit)}
+          Page {query.page} of {Math.ceil(total / limit)}
         </span>
         <div className="space-x-2">
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-            disabled={page === 1}
+            onClick={() => handlePageChange(Math.max(query.page - 1, 1))}
+            disabled={query.page === 1}
           >
             Previous
           </Button>
@@ -232,11 +240,13 @@ export default function RequestsTableShelter() {
             variant="outline"
             size="sm"
             onClick={() =>
-              setPage((prev) =>
-                prev < Math.ceil(total / limit) ? prev + 1 : prev
+              handlePageChange(
+                query.page < Math.ceil(total / limit)
+                  ? query.page + 1
+                  : query.page
               )
             }
-            disabled={page >= Math.ceil(total / limit)}
+            disabled={query.page >= Math.ceil(total / limit)}
           >
             Next
           </Button>

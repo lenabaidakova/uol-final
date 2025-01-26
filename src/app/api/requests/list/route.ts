@@ -33,10 +33,10 @@ export async function GET(request: Request) {
     // build where condition
     const where: any = {};
     if (urgency) where.urgency = urgency;
-    if (location) where.location = { contains: location, mode: 'insensitive' };
+    if (location) where.location = { contains: location.toLowerCase() };
     if (type) where.type = type;
     if (status) where.status = status;
-    if (text) where.title = { contains: text, mode: 'insensitive' };
+    if (text) where.title = { contains: text.toLowerCase() };
     if (dueDateStart || dueDateEnd) {
       where.dueDate = {};
       if (dueDateStart) where.dueDate.gte = new Date(dueDateStart);
