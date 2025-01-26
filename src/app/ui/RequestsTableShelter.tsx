@@ -27,13 +27,14 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge, Flex, Link, Text, Skeleton } from '@radix-ui/themes';
-import { useRequestList } from '@/hooks/api/useRequestList';
+import { RequestListQuery, useRequestList } from '@/hooks/api/useRequestList';
 import { ErrorApi } from '@/app/ui/ErrorApi';
 import {
   REQUEST_STATUS_LABELS,
   URGENCY_LABELS,
   UrgencyType,
 } from '@/constants/Request';
+import { useDebounceCallback } from 'usehooks-ts';
 
 export type Request = {
   title: string;
@@ -134,8 +135,15 @@ const columns: ColumnDef<Request>[] = [
 ];
 
 export default function RequestsTableShelter() {
-  const [query, setQuery] = React.useState({ page: 1, limit: 5 });
+  const [query, setQuery] = React.useState<RequestListQuery>({
+    page: 1,
+    limit: 5,
+  });
   const { requests, total, limit, isLoading, error } = useRequestList(query);
+
+  const debouncedSearch = useDebounceCallback((newText: string) => {
+    setQuery((prev) => ({ ...prev, text: newText, page: 1 }));
+  }, 500);
 
   const handlePageChange = (newPage: number) => {
     const updatedQuery = { ...query, page: newPage };
@@ -143,9 +151,7 @@ export default function RequestsTableShelter() {
   };
 
   const handleSearchChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newText = e.target.value;
-    const updatedQuery = { ...query, text: newText };
-    setQuery(updatedQuery);
+    debouncedSearch(e.target.value);
   };
 
   const table = useReactTable({
