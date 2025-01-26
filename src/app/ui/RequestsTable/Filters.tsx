@@ -16,6 +16,7 @@ import { DateRange } from 'react-day-picker';
 import { format } from 'date-fns';
 import { useDebounceCallback } from 'usehooks-ts';
 import { RequestListQuery } from '@/hooks/api/useRequestList';
+import LocationsCombobox from '@/app/ui/RequestsTable/LocationsCombobox';
 
 type FiltersProps = {
   query: RequestListQuery;
@@ -27,6 +28,7 @@ export default function Filters({ setQuery, query }: FiltersProps) {
   const [title, setTitle] = React.useState('');
   const [urgency, setUrgency] = React.useState('');
   const [status, setStatus] = React.useState('');
+  const [location, setLocation] = React.useState('');
 
   const debouncedSearch = useDebounceCallback((newText: string) => {
     setQuery({ ...query, text: newText, page: 1 });
@@ -47,11 +49,17 @@ export default function Filters({ setQuery, query }: FiltersProps) {
     setQuery({ ...query, status: value, page: 1 });
   };
 
+  const handleLocationChange = (value: string) => {
+    setLocation(value);
+    setQuery({ ...query, location: value, page: 1 });
+  };
+
   const resetAllFilters = () => {
     setDate(undefined);
     setTitle('');
     setUrgency('');
     setStatus('');
+    setLocation('');
 
     const updatedQuery = { page: 1, limit: 5 };
     setQuery(updatedQuery);
@@ -71,7 +79,7 @@ export default function Filters({ setQuery, query }: FiltersProps) {
   };
 
   return (
-    <Flex py="4" justify="between" align="center">
+    <Flex py="4" justify="between" align="center" gap="2">
       <Flex align="center" gap="2">
         <Box>
           <Input
@@ -111,6 +119,10 @@ export default function Filters({ setQuery, query }: FiltersProps) {
               <SelectItem value={REQUEST_STATUS.ARCHIVED}>Archived</SelectItem>
             </SelectContent>
           </Select>
+        </Box>
+
+        <Box>
+          <LocationsCombobox value={location} onChange={handleLocationChange} />
         </Box>
       </Flex>
 
