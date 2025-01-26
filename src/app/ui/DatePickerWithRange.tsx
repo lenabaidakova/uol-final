@@ -1,8 +1,6 @@
-'use client';
-
 import * as React from 'react';
-import { addDays, format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
+import { format } from 'date-fns';
+import { CalendarIcon, X } from 'lucide-react';
 import { DateRange } from 'react-day-picker';
 
 import { cn } from '@/lib/utils';
@@ -14,23 +12,30 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 
-export function DatePickerWithRange({
-  className,
-}: React.HTMLAttributes<HTMLDivElement>) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2024, 9, 20),
-    to: addDays(new Date(2024, 10, 20), 20),
-  });
+type DatePickerWithRangeProps = {
+  className?: string;
+  onSelect: (date?: DateRange) => void;
+  placeholder?: string;
+  date?: DateRange;
+  setDate: (date: DateRange) => void;
+};
 
+export function DatePickerWithRange({
+  date,
+  setDate,
+  className,
+  onSelect,
+  placeholder = 'Pick a date',
+}: DatePickerWithRangeProps) {
   return (
-    <div className={cn('grid gap-2', className)}>
+    <div className={cn('flex gap-2', className)}>
       <Popover>
         <PopoverTrigger asChild>
           <Button
             id="date"
             variant={'outline'}
             className={cn(
-              'w-[300px] justify-start text-left font-normal',
+              'justify-start text-left font-normal',
               !date && 'text-muted-foreground'
             )}
           >
@@ -45,7 +50,7 @@ export function DatePickerWithRange({
                 format(date.from, 'LLL dd, y')
               )
             ) : (
-              <span>Pick a date</span>
+              <span>{placeholder}</span>
             )}
           </Button>
         </PopoverTrigger>
@@ -53,9 +58,12 @@ export function DatePickerWithRange({
           <Calendar
             initialFocus
             mode="range"
-            defaultMonth={date?.from}
+            defaultMonth={new Date()}
             selected={date}
-            onSelect={setDate}
+            onSelect={(data) => {
+              setDate(data);
+              onSelect(data);
+            }}
             numberOfMonths={2}
           />
         </PopoverContent>

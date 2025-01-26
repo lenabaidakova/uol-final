@@ -7,7 +7,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Check, MoreHorizontal, Pencil, Trash } from 'lucide-react';
+import { Check, MoreHorizontal, Pencil, Trash, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -31,16 +31,22 @@ import { RequestListQuery, useRequestList } from '@/hooks/api/useRequestList';
 import { ErrorApi } from '@/app/ui/ErrorApi';
 import {
   REQUEST_STATUS_LABELS,
+  RequestType,
   URGENCY_LABELS,
   UrgencyType,
 } from '@/constants/Request';
 import { useDebounceCallback } from 'usehooks-ts';
+import { DatePickerWithRange } from '@/app/ui/DatePickerWithRange';
+import { DateRange } from 'react-day-picker';
+import { format, parseISO } from 'date-fns';
 
 export type Request = {
   title: string;
   location: string;
   urgency: UrgencyType;
   status: 'open' | 'in progress';
+  dueDate: string;
+  type: RequestType;
 };
 
 const columns: ColumnDef<Request>[] = [
@@ -71,6 +77,17 @@ const columns: ColumnDef<Request>[] = [
       const label = URGENCY_LABELS[value]?.label;
 
       return <Badge color={color}>{label || value}</Badge>;
+    },
+  },
+  {
+    accessorKey: 'dueDate',
+    header: 'Due date',
+    cell: ({ row }) => {
+      const value = row.getValue('dueDate');
+      const formattedDate = value
+        ? format(parseISO(value), 'MMMM d, yyyy')
+        : '-';
+      return <div>{formattedDate}</div>;
     },
   },
   {
@@ -135,6 +152,8 @@ const columns: ColumnDef<Request>[] = [
 ];
 
 export default function RequestsTableShelter() {
+  const [date, setDate] = React.useState<DateRange | undefined>();
+  const [title, setTitle] = React.useState('');
   const [query, setQuery] = React.useState<RequestListQuery>({
     page: 1,
     limit: 5,
@@ -150,8 +169,29 @@ export default function RequestsTableShelter() {
     setQuery(updatedQuery);
   };
 
-  const handleSearchChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value);
     debouncedSearch(e.target.value);
+  };
+
+  const resetAllFilters = () => {
+    setDate(undefined);
+    setTitle('');
+    const updatedQuery = { page: 1, limit: 5 };
+    setQuery(updatedQuery);
+  };
+
+  const handleDateRangeChange = (range?: DateRange) => {
+    const formattedStartDate = range?.from
+      ? format(range.from, 'yyyy-MM-dd')
+      : '';
+    const formattedEndDate = range?.to ? format(range.to, 'yyyy-MM-dd') : '';
+    setQuery((prev) => ({
+      ...prev,
+      page: 1,
+      dueDateStart: formattedStartDate,
+      dueDateEnd: formattedEndDate,
+    }));
   };
 
   const table = useReactTable({
@@ -164,13 +204,29 @@ export default function RequestsTableShelter() {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Search requests by title..."
-          onChange={handleSearchChange}
-          className="max-w-[500px]"
-        />
-      </div>
+      <Flex py="4" justify="between" align="center">
+        <Flex align="center">
+          <Input
+            placeholder="Search requests by title..."
+            value={title}
+            onChange={handleSearchChange}
+            className="max-w-[500px] w-[300px]"
+          />
+        </Flex>
+
+        <Flex align="center" gap="2">
+          <DatePickerWithRange
+            date={date}
+            setDate={setDate}
+            onSelect={handleDateRangeChange}
+            placeholder="Filter by due date"
+          />
+
+          <Button variant="outline" onClick={resetAllFilters}>
+            <X /> Reset all filters
+          </Button>
+        </Flex>
+      </Flex>
       <div className="rounded-md border">
         <Table>
           <TableHeader>

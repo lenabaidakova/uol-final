@@ -33,18 +33,24 @@ export type RequestListQuery = {
   page?: number;
   limit?: number;
   text?: string;
+  dueDateStart?: string;
+  dueDateEnd?: string;
 };
 
 const fetchRequestList = async (
   query: RequestListQuery
 ): Promise<RequestListResponse> => {
-  const { page = 1, limit = 10, text = '' } = query;
+  const {
+    page = 1,
+    limit = 10,
+    text = '',
+    dueDateStart = '',
+    dueDateEnd = '',
+  } = query;
 
-  const response = await apiClient.get('/requests/list', {
-    params: { page, limit, text },
+  return apiClient.get('/requests/list', {
+    params: { page, limit, text, dueDateStart, dueDateEnd },
   });
-
-  return response;
 };
 
 export function useRequestList(

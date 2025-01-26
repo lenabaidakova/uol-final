@@ -19,7 +19,7 @@ export default function SupporterDashboard() {
       <PageHeader
         heading="Alex Johnson's Dashboard"
         columns="auto 1fr auto"
-        actions={<DatePickerWithRange />}
+        // actions={<DatePickerWithRange />}
       />
 
       <Box maxWidth="1400px" m="auto" px="4">
