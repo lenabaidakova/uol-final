@@ -18,6 +18,7 @@ model User {
   updatedAt DateTime @updatedAt
   confirmationToken String?
   requests  Request[] // user can have many requests
+  messages  Message[] // user can send many messages
 }
 
 model Request {
@@ -33,6 +34,17 @@ model Request {
   creator     User     @relation(fields: [creatorId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  messages    Message[] // request can have many messages
 }
 
+model Message {
+  id         String   @id @default(cuid())
+  requestId  String
+  senderId   String
+  text       String
+  createdAt  DateTime @default(now())
+
+  request    Request  @relation(fields: [requestId], references: [id])
+  sender     User     @relation(fields: [senderId], references: [id])
+}
 
