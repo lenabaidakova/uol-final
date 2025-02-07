@@ -15,6 +15,7 @@ import * as React from 'react';
 import RouterLink from 'next/link';
 import { appRoutes } from '@/lib/appRoutes';
 import CompleteRequest from '@/app/ui/RequestDropdownActions/CompleteRequest';
+import ArchiveRequest from '@/app/ui/RequestDropdownActions/ArchiveRequest';
 
 type RequestDropdownActionsProps = {
   requestId: string;
@@ -48,10 +49,7 @@ export default function RequestDropdownActions({
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <Trash />
-          Archive
-        </DropdownMenuItem>
+        <ArchiveRequest requestId={requestId} />
       </DropdownMenuContent>
     </DropdownMenu>
   );
