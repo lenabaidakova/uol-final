@@ -8,6 +8,11 @@ export async function middleware(request: Request) {
   // public routes
   const publicPaths = ['/login', '/register', '/about', '/public/:path*'];
 
+  // https://github.com/nextauthjs/next-auth/issues/8578
+  if (request.nextUrl.pathname.startsWith('/api/auth')) {
+    return NextResponse.next();
+  }
+
   const escapedPaths = publicPaths.map((path) =>
     path.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&').replace(/:\w+/g, '.*')
   );

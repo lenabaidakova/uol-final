@@ -34,7 +34,8 @@ export default function LoginPage() {
     },
   });
 
-  const onSubmit = (data: LoginFormData) => {
+  const onSubmit = (data: LoginFormData, e) => {
+    e.preventDefault();
     mutate(data);
   };
 
@@ -47,7 +48,7 @@ export default function LoginPage() {
           <Flex gap="3" direction="column">
             <Input
               label="Email"
-              type="email"
+              placeholder="Enter your email"
               errorMessage={errors.email?.message}
               required
               {...register('email')}
@@ -56,6 +57,7 @@ export default function LoginPage() {
 
             <Input
               label="Password"
+              placeholder="Enter your password"
               type="password"
               errorMessage={errors.password?.message}
               required

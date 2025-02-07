@@ -1,14 +1,17 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const bcrypt = require('bcrypt');
 
 async function main() {
   console.log('Seeding database with shelter users and requests...');
+
+  const hashedPassword = await bcrypt.hash('password123', 10);
 
   const shelter1 = await prisma.user.create({
     data: {
       email: 'shelter1@example.com',
       name: 'Shelter A',
-      password: 'password123',
+      password: hashedPassword,
       role: 'SHELTER',
     },
   });
@@ -17,7 +20,7 @@ async function main() {
     data: {
       email: 'shelter2@example.com',
       name: 'Shelter B',
-      password: 'password123',
+      password: hashedPassword,
       role: 'SHELTER',
     },
   });

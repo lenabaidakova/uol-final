@@ -63,5 +63,9 @@ brew install mailhog
 mailhog
 ```
 
+Recreate all and seed
 
+```shell
+npx prisma migrate reset
+```
 

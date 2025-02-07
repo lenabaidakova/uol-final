@@ -84,6 +84,7 @@ export default function RegisterPage() {
           <Flex gap="3" direction="column">
             <Input
               label="Name"
+              placeholder="Enter your name"
               errorMessage={errors.email?.message}
               required
               {...register('name')}
@@ -92,7 +93,7 @@ export default function RegisterPage() {
 
             <Input
               label="Email"
-              type="email"
+              placeholder="Enter your email"
               errorMessage={errors.email?.message}
               required
               {...register('email')}
@@ -102,6 +103,7 @@ export default function RegisterPage() {
             <Input
               label="Password"
               type="password"
+              placeholder="Create your password"
               errorMessage={errors.password?.message}
               required
               {...register('password')}
