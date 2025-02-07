@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { ChatCard } from '@/app/request/[:id]/ui/Chat';
-import { DropdownActions } from '@/app/request/[:id]/ui/ui/DropdownActions';
+import RequestDropdownActions from '@/app/ui/RequestDropdownActions';
 
 export default function RequestView() {
   return (
@@ -18,7 +18,7 @@ export default function RequestView() {
         heading="Request details"
         columns="auto 1fr auto"
         backLink="/shelter/requests"
-        actions={<DropdownActions />}
+        actions={<RequestDropdownActions />}
       >
         <Badge color="orange">In progress</Badge>
       </PageHeader>

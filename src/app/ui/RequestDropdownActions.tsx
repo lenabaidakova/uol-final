@@ -13,13 +13,19 @@ import { useSidebar } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import * as React from 'react';
 
-export function DropdownActions() {
+type RequestDropdownActionsProps = {
+  requestId: string;
+};
+
+export default function RequestDropdownActions({
+  requestId,
+}: RequestDropdownActionsProps) {
   const { isMobile } = useSidebar();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button variant="ghost" size="icon">
           <EllipsisVertical />
         </Button>
       </DropdownMenuTrigger>

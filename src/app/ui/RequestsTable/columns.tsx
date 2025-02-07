@@ -1,7 +1,9 @@
 'use client';
 
+import * as React from 'react';
 import {
   REQUEST_STATUS_LABELS,
+  RequestStatusType,
   RequestType,
   URGENCY_LABELS,
   UrgencyType,
@@ -9,23 +11,14 @@ import {
 import { ColumnDef } from '@tanstack/react-table';
 import { Badge, Flex, Link, Text } from '@radix-ui/themes';
 import { format, parseISO } from 'date-fns';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { Check, MoreHorizontal, Pencil, Trash } from 'lucide-react';
-import * as React from 'react';
+import RequestDropdownActions from '@/app/ui/RequestDropdownActions';
 
 export type Request = {
+  id: string;
   title: string;
   location: string;
   urgency: UrgencyType;
-  status: 'open' | 'in progress';
+  status: RequestStatusType;
   dueDate: string;
   type: RequestType;
 };
@@ -106,33 +99,9 @@ export const columns: ColumnDef<Request>[] = [
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Check />
-                Close
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Pencil />
-                Edit
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-700">
-              <Trash />
-              Remove
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+      const requestId: string = row.getValue('id');
+
+      return <RequestDropdownActions requestId={requestId} />;
     },
   },
 ];
