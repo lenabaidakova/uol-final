@@ -99,7 +99,7 @@ export const columns: ColumnDef<Request>[] = [
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
-      const requestId: string = row.getValue('id');
+      const requestId = row.original.id;
 
       return <RequestDropdownActions requestId={requestId} />;
     },
