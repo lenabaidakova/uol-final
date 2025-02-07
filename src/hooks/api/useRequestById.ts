@@ -1,45 +1,56 @@
-import { useMutation } from '@tanstack/react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import apiClient from '@/lib/axios';
-import type { MutationOptions } from '@/types/Api';
-import { RequestType, UrgencyType } from '@/constants/Request';
+import {
+  RequestStatusType,
+  RequestType,
+  UrgencyType,
+} from '@/constants/Request';
 
-export type RequestByIdArgs = {
+type RequestByIdResponse = {
+  request: {
+    id: string;
+    title: string;
+    dueDate: string;
+    details: string;
+    location: string;
+    type: RequestType;
+    urgency: UrgencyType;
+    status: RequestStatusType;
+  };
+};
+
+export type RequestByIdQuery = {
   id: string;
 };
 
-type RequestByIdResponse = {
-  title: string;
-  dueDate: string;
-  details: string;
-  location: string;
-  type: RequestType;
-  urgency: UrgencyType;
-};
-
-const getRequestById = (
-  data: RequestByIdArgs
+const getRequestById = async (
+  query: RequestByIdQuery
 ): Promise<RequestByIdResponse> => {
   return apiClient.get('/requests/item', {
     params: {
-      id: data.id,
+      id: query.id,
     },
   });
 };
 
 export function useRequestById(
-  opt?: MutationOptions<RequestByIdResponse, RequestByIdArgs>
+  query: RequestByIdQuery,
+  options?: UseQueryOptions<RequestByIdResponse>
 ) {
-  const { mutate, isPending, isError, error } = useMutation({
-    mutationFn: getRequestById,
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ['useRequestById', query],
+    enabled: !!query.id,
+    queryFn: () => getRequestById(query),
+    retry: 2,
     meta: {
       name: 'Get request by id',
     },
-    ...opt,
+    ...options,
   });
 
   return {
-    mutate,
-    isMutating: isPending,
+    data,
+    isLoading,
     error: isError ? error : null,
   };
 }
