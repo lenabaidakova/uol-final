@@ -13,6 +13,7 @@ async function main() {
       name: 'Shelter A',
       password: hashedPassword,
       role: 'SHELTER',
+      verified: true,
     },
   });
 
@@ -22,6 +23,7 @@ async function main() {
       name: 'Shelter B',
       password: hashedPassword,
       role: 'SHELTER',
+      verified: true,
     },
   });
 
