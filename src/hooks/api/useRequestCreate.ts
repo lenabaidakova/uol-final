@@ -1,13 +1,15 @@
 import { useMutation } from '@tanstack/react-query';
 import apiClient from '@/lib/axios';
 import type { MutationOptions } from '@/types/Api';
-import { RoleType } from '@/types/RoleType';
+import { RequestType, UrgencyType } from '@/constants/Request';
 
 export type CreateRequestData = {
-  email: string;
-  name: string;
-  password: string;
-  role: RoleType;
+  title: string;
+  dueDate: string;
+  details: string;
+  location: string;
+  type: RequestType;
+  urgency: UrgencyType;
 };
 
 const createRequest = (data: CreateRequestData): Promise<unknown> => {

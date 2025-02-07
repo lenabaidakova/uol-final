@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import {
   Form,
   FormControl,
@@ -35,10 +35,11 @@ import { REQUEST_TYPE, URGENCY } from '@/constants/Request';
 import { useRequestCreate } from '@/hooks/api/useRequestCreate';
 import { Box, Button } from '@radix-ui/themes';
 import { ErrorApi } from '@/app/ui/ErrorApi';
+import { useRouter } from 'next/navigation';
 
 const FormSchema = z.object({
   title: z.string().min(2),
-  dueDate: z.string(),
+  dueDate: z.date(),
   details: z.string(),
   location: z.string(),
   type: z.nativeEnum(REQUEST_TYPE),
@@ -46,20 +47,27 @@ const FormSchema = z.object({
 });
 
 export function NewRequestForm() {
-  const { mutate: createRequest, isMutating, error } = useRequestCreate();
+  const router = useRouter();
+  const { toast } = useToast();
+  const {
+    mutate: createRequest,
+    isMutating,
+    error,
+  } = useRequestCreate({
+    onSuccess: () => {
+      toast({
+        title: 'Request created',
+        description: 'Your request is now visible',
+      });
+      router.push('/');
+    },
+  });
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+    createRequest({ ...data });
   }
 
   return (
@@ -80,6 +88,23 @@ export function NewRequestForm() {
                 <FormControl>
                   <Input
                     placeholder="e.g., Cleaning supplies, Dog food, Volunteer help"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="location"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Location</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter the location where help is needed"
                     {...field}
                   />
                 </FormControl>

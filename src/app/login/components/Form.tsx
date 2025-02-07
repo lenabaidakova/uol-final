@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { Input } from '@/app/ui/Input';
 import { Box, Button, Card, Flex, Heading, Link, Text } from '@radix-ui/themes';
 import { ErrorApi } from '@/app/ui/ErrorApi';
+import { appRoutes } from '@/lib/appRoutes';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -80,7 +81,8 @@ export default function LoginPage() {
 
           <Box mt="3" className="text-center">
             <Text size="2">
-              Don’t have an account yet? <Link href="/register">Sign up</Link>
+              Don’t have an account yet?{' '}
+              <Link href={appRoutes.registration()}>Sign up</Link>
             </Text>
           </Box>
         </form>
