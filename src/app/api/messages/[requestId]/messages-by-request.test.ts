@@ -76,7 +76,6 @@ describe('/api/messages/[requestId]', () => {
 
     const body = await response.json();
     expect(response.status).toBe(200);
-    expect(body.message).toBe('Messages fetched');
-    expect(body.data).toEqual(mockMessages);
+    expect(body.messages).toEqual(mockMessages);
   });
 });

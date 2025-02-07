@@ -29,10 +29,7 @@ export async function GET(
       orderBy: { createdAt: 'asc' },
     });
 
-    return NextResponse.json(
-      { message: 'Messages fetched', data: messages },
-      { status: 200 }
-    );
+    return NextResponse.json({ messages }, { status: 200 });
   } catch (error) {
     console.error('Error fetching messages:', error);
     return NextResponse.json(
