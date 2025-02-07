@@ -6,6 +6,8 @@ import {
   RequestStatusType,
 } from '@/constants/Request';
 
+export const REQUEST_LIST_KEY = 'requestList';
+
 export type Request = {
   id: string;
   title: string;
@@ -73,7 +75,7 @@ export function useRequestList(
   options?: UseQueryOptions<RequestListResponse>
 ) {
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['requestList', query],
+    queryKey: [REQUEST_LIST_KEY, query],
     queryFn: () => fetchRequestList(query),
     retry: 2,
     meta: {

@@ -1,6 +1,6 @@
 'use client';
 
-import { EllipsisVertical, Pencil, Trash, Check } from 'lucide-react';
+import { EllipsisVertical, Pencil, Trash } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +12,9 @@ import {
 import { useSidebar } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import * as React from 'react';
+import RouterLink from 'next/link';
+import { appRoutes } from '@/lib/appRoutes';
+import CompleteRequest from '@/app/ui/RequestDropdownActions/CompleteRequest';
 
 type RequestDropdownActionsProps = {
   requestId: string;
@@ -36,19 +39,18 @@ export default function RequestDropdownActions({
         sideOffset={4}
       >
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <Check />
-            Close
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Pencil />
-            Edit
+          <CompleteRequest requestId={requestId} />
+
+          <DropdownMenuItem asChild>
+            <RouterLink href={appRoutes.request(requestId)}>
+              <Pencil /> Edit
+            </RouterLink>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-red-700">
+        <DropdownMenuItem>
           <Trash />
-          Remove
+          Archive
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
