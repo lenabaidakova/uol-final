@@ -6,6 +6,7 @@ import { ThemeProvider } from 'next-themes';
 import { Theme } from '@radix-ui/themes';
 import { RoleProvider } from '@/providers/RoleProvider';
 import { SessionProvider } from 'next-auth/react';
+import { Toaster } from '@/components/ui/toaster';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,7 +22,11 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
     <SessionProvider>
       <QueryClientProvider client={queryClient}>
         <Theme accentColor="grass">
-          <RoleProvider>{children}</RoleProvider>
+          <RoleProvider>
+            {children}
+
+            <Toaster />
+          </RoleProvider>
         </Theme>
       </QueryClientProvider>
     </SessionProvider>
