@@ -6,10 +6,19 @@ export async function middleware(request: Request) {
   const token = await getToken({ req: request });
 
   // public routes
-  const publicPaths = ['/login', '/register', '/about', '/public/:path*'];
+  const publicPaths = [
+    '/login',
+    '/register',
+    '/about',
+    '/public/:path*',
+    '/docs',
+  ];
 
   // https://github.com/nextauthjs/next-auth/issues/8578
-  if (request.nextUrl.pathname.startsWith('/api/auth')) {
+  if (
+    request.nextUrl.pathname.startsWith('/api/auth') ||
+    request.nextUrl.pathname.startsWith('/api/docs')
+  ) {
     return NextResponse.next();
   }
 
