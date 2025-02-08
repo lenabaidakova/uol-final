@@ -7,34 +7,34 @@ export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
 
-    // check if user is authenticated
     if (!session || !session.user) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
-    const { requestId, text } = await request.json();
+    const { requestId } = await request.json();
+    const userId = session.user.id;
 
-    if (!requestId || !text) {
+    if (!requestId) {
       return NextResponse.json(
-        { message: 'Missing required fields' },
+        { message: 'Request ID is required' },
         { status: 400 }
       );
     }
 
-    const message = await prisma.message.create({
-      data: {
+    // delete all unread messages for user in this request
+    await prisma.unreadMessage.deleteMany({
+      where: {
+        userId,
         requestId,
-        senderId: session.user.id,
-        text,
       },
     });
 
     return NextResponse.json(
-      { message: 'Message sent', data: message },
-      { status: 201 }
+      { message: 'Messages marked as read' },
+      { status: 200 }
     );
   } catch (error) {
-    console.error('Error sending message:', error);
+    console.error('Error marking messages as read:', error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }

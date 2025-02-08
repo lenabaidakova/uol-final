@@ -20,6 +20,7 @@ model User {
   requests  Request[] // user can have many requests
   messages  Message[] // user can send many messages
   assignedRequests Request[] @relation("AssignedRequests") // user can take requests in progress
+  unreadMessages   UnreadMessage[] // track unread messages per user
 }
 
 model Request {
@@ -40,6 +41,7 @@ model Request {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   messages    Message[] // request can have many messages
+  unreadMessages UnreadMessage[] // track unread messages per request
 }
 
 model Message {
@@ -51,5 +53,19 @@ model Message {
 
   request    Request  @relation(fields: [requestId], references: [id])
   sender     User     @relation(fields: [senderId], references: [id])
+  unreadMessages UnreadMessage[] // track unread messages per message
 }
 
+model UnreadMessage {
+  id         String   @id @default(cuid())
+  userId     String
+  messageId  String
+  requestId  String
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  message    Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  request    Request  @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, messageId]) // avoid duplicate unread messages
+}

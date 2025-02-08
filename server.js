@@ -31,21 +31,56 @@ app.prepare().then(() => {
       socket.join(requestId);
     });
 
-    socket.on('send_message', async (message) => {
-      console.log('Message received:', message);
+    socket.on('send_message', async ({ requestId, senderId, text }) => {
+      console.log('Message received:', { requestId, senderId, text });
 
       try {
         // save message in db
         const savedMessage = await prisma.message.create({
-          data: {
-            requestId: message.requestId,
-            senderId: message.senderId,
-            text: message.text,
-          },
+          data: { requestId, senderId, text },
         });
 
+        const requestInfo = await prisma.request.findUnique({
+          where: { id: requestId },
+          select: { creatorId: true, assignedToId: true },
+        });
+
+        if (!requestInfo) {
+          console.error('Request not found');
+          return;
+        }
+
+        // determine message recipients
+        const recipients = [];
+        if (requestInfo.creatorId !== senderId) {
+          recipients.push(requestInfo.creatorId);
+        }
+        if (requestInfo.assignedToId && requestInfo.assignedToId !== senderId) {
+          recipients.push(requestInfo.assignedToId);
+        }
+
+        console.log('Recipients:', recipients);
+
+        // insert unread messages for recipients
+        for (const recipientId of recipients) {
+          const existingUnread = await prisma.unreadMessage.findFirst({
+            where: { userId: recipientId, messageId: savedMessage.id },
+          });
+
+          if (!existingUnread) {
+            await prisma.unreadMessage.create({
+              data: {
+                userId: recipientId,
+                messageId: savedMessage.id,
+                requestId,
+                createdAt: new Date(),
+              },
+            });
+          }
+        }
+
         // emit event with saved message
-        io.to(message.requestId).emit('receive_message', savedMessage);
+        io.to(requestId).emit('receive_message', savedMessage);
       } catch (error) {
         console.error('Error saving message:', error);
       }

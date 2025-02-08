@@ -57,6 +57,7 @@ async function main() {
       location: 'London',
       status: 'PENDING',
       creatorId: shelter1.id,
+      assignedToId: supporter1.id,
     },
     {
       title: 'Looking for volunteers for cleanup',
@@ -67,6 +68,7 @@ async function main() {
       location: 'Manchester',
       status: 'IN_PROGRESS',
       creatorId: shelter2.id,
+      assignedToId: supporter2.id,
     },
     {
       title: 'Need medical supplies',
@@ -76,6 +78,7 @@ async function main() {
       location: 'London',
       status: 'PENDING',
       creatorId: shelter1.id,
+      assignedToId: null,
     },
     {
       title: 'Dog training services required',
@@ -85,6 +88,7 @@ async function main() {
       location: 'Manchester',
       status: 'PENDING',
       creatorId: shelter2.id,
+      assignedToId: supporter1.id,
     },
     {
       title: 'Seeking transport volunteers',
@@ -95,6 +99,7 @@ async function main() {
       location: 'London',
       status: 'ARCHIVED',
       creatorId: shelter1.id,
+      assignedToId: null,
     },
     ...Array.from({ length: 15 }, (_, index) => ({
       title: `General request #${index + 6}`,
@@ -138,7 +143,35 @@ async function main() {
   ];
 
   for (const message of sampleMessages) {
-    await prisma.message.create({ data: message });
+    const createdMessage = await prisma.message.create({ data: message });
+
+    const request = await prisma.request.findUnique({
+      where: { id: message.requestId },
+      select: { creatorId: true, assignedToId: true },
+    });
+
+    const recipients = [request.creatorId, request.assignedToId].filter(
+      (id) => id && id !== message.senderId
+    );
+
+    // insert unread messages
+    await Promise.all(
+      recipients.map(async (recipientId) => {
+        const exists = await prisma.unreadMessage.findFirst({
+          where: { userId: recipientId, messageId: createdMessage.id },
+        });
+
+        if (!exists) {
+          await prisma.unreadMessage.create({
+            data: {
+              userId: recipientId,
+              messageId: createdMessage.id,
+              requestId: message.requestId,
+            },
+          });
+        }
+      })
+    );
   }
 
   console.log('Seeding completed');
