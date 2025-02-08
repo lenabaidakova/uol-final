@@ -27,9 +27,25 @@ export async function GET(
     const messages = await prisma.message.findMany({
       where: { requestId },
       orderBy: { createdAt: 'asc' },
+      include: {
+        sender: {
+          select: {
+            name: true, // include user name
+          },
+        },
+      },
     });
 
-    return NextResponse.json({ messages }, { status: 200 });
+    const formattedMessages = messages.map((msg) => ({
+      id: msg.id,
+      requestId: msg.requestId,
+      senderId: msg.senderId,
+      senderName: msg.sender.name,
+      text: msg.text,
+      createdAt: msg.createdAt,
+    }));
+
+    return NextResponse.json({ messages: formattedMessages }, { status: 200 });
   } catch (error) {
     console.error('Error fetching messages:', error);
     return NextResponse.json(

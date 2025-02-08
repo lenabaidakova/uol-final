@@ -54,7 +54,7 @@ describe('/api/messages/[requestId]', () => {
 
   it('should return 200 and messages if user is authenticated', async () => {
     vi.mocked(getServerSession).mockResolvedValueOnce({
-      user: { id: 'user-id-123' },
+      user: { id: 'user-id-123', name: 'John' },
     });
 
     const mockMessages = [
@@ -64,6 +64,7 @@ describe('/api/messages/[requestId]', () => {
         senderId: 'user-1',
         text: 'Hi, do you still need help?',
         createdAt: '2025-02-02T13:46:41.683Z',
+        sender: { name: 'John' },
       },
     ];
 
@@ -76,6 +77,15 @@ describe('/api/messages/[requestId]', () => {
 
     const body = await response.json();
     expect(response.status).toBe(200);
-    expect(body.messages).toEqual(mockMessages);
+    expect(body.messages).toEqual([
+      {
+        id: 'msg-1',
+        requestId: 'request-id-123',
+        senderId: 'user-1',
+        senderName: 'John',
+        text: 'Hi, do you still need help?',
+        createdAt: '2025-02-02T13:46:41.683Z',
+      },
+    ]);
   });
 });
