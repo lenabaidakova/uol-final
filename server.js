@@ -3,6 +3,9 @@
 const { createServer } = require('http');
 const next = require('next');
 const { Server } = require('socket.io');
+const { PrismaClient } = require('@prisma/client');
+
+const prisma = new PrismaClient();
 
 const dev = process.env.NODE_ENV !== 'production';
 const hostname = 'localhost';
@@ -28,10 +31,24 @@ app.prepare().then(() => {
       socket.join(requestId);
     });
 
-    socket.on('send_message', (message) => {
+    socket.on('send_message', async (message) => {
       console.log('Message received:', message);
 
-      io.to(message.requestId).emit('receive_message', message);
+      try {
+        // save message in db
+        const savedMessage = await prisma.message.create({
+          data: {
+            requestId: message.requestId,
+            senderId: message.senderId,
+            text: message.text,
+          },
+        });
+
+        // emit event with saved message
+        io.to(message.requestId).emit('receive_message', savedMessage);
+      } catch (error) {
+        console.error('Error saving message:', error);
+      }
     });
 
     socket.on('disconnect', () => {

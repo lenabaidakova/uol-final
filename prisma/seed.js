@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 const bcrypt = require('bcrypt');
 
 async function main() {
-  console.log('Seeding database with shelter users and requests...');
+  console.log('Seeding database...');
 
   const hashedPassword = await bcrypt.hash('password123', 10);
 
@@ -23,6 +23,26 @@ async function main() {
       name: 'Shelter B',
       password: hashedPassword,
       role: 'SHELTER',
+      verified: true,
+    },
+  });
+
+  const supporter1 = await prisma.user.create({
+    data: {
+      email: 'supporter1@example.com',
+      name: 'Supporter One',
+      password: hashedPassword,
+      role: 'SUPPORTER',
+      verified: true,
+    },
+  });
+
+  const supporter2 = await prisma.user.create({
+    data: {
+      email: 'supporter2@example.com',
+      name: 'Supporter Two',
+      password: hashedPassword,
+      role: 'SUPPORTER',
       verified: true,
     },
   });
@@ -88,11 +108,40 @@ async function main() {
     })),
   ];
 
+  const createdRequests = [];
   for (const request of sampleRequests) {
-    await prisma.request.create({ data: request });
+    const createdRequest = await prisma.request.create({ data: request });
+    createdRequests.push(createdRequest);
   }
 
-  console.log('Seeding completed with shelter users and requests.');
+  const sampleMessages = [
+    {
+      requestId: createdRequests[0].id,
+      senderId: supporter1.id,
+      text: 'I can donate 10 blankets!',
+    },
+    {
+      requestId: createdRequests[1].id,
+      senderId: supporter2.id,
+      text: 'I would love to volunteer for the cleanup.',
+    },
+    {
+      requestId: createdRequests[0].id,
+      senderId: shelter1.id,
+      text: 'That would be amazing! Thank you!',
+    },
+    {
+      requestId: createdRequests[1].id,
+      senderId: shelter2.id,
+      text: 'We really appreciate your help!',
+    },
+  ];
+
+  for (const message of sampleMessages) {
+    await prisma.message.create({ data: message });
+  }
+
+  console.log('Seeding completed');
 }
 
 main()

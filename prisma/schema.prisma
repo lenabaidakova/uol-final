@@ -19,6 +19,7 @@ model User {
   confirmationToken String?
   requests  Request[] // user can have many requests
   messages  Message[] // user can send many messages
+  assignedRequests Request[] @relation("AssignedRequests") // user can take requests in progress
 }
 
 model Request {
@@ -32,6 +33,10 @@ model Request {
   status      String   @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED, ARCHIVED
   creatorId   String
   creator     User     @relation(fields: [creatorId], references: [id])
+
+  assignedToId String? // supporter who took this request
+  assignedTo   User?   @relation("AssignedRequests", fields: [assignedToId], references: [id]) // supporter who took this request
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   messages    Message[] // request can have many messages
