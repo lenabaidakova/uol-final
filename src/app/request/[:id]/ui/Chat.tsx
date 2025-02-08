@@ -1,23 +1,21 @@
 'use client';
 
-import * as React from 'react';
+import { useEffect, useState } from 'react';
+import { socket } from '@/socket';
 import { Send } from 'lucide-react';
+
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { useMessageGetByRequestId } from '@/hooks/api/useMessageGetByRequestId';
 import { useSession } from 'next-auth/react';
-import { io } from 'socket.io-client';
-
-const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL;
+import { useMessageGetByRequestId } from '@/hooks/api/useMessageGetByRequestId';
 
 type ChatCardProps = {
   requestId: string;
@@ -26,50 +24,57 @@ type ChatCardProps = {
 export function ChatCard({ requestId }: ChatCardProps) {
   const { data: session } = useSession();
   const currentUserId = session?.user?.id;
-  const [input, setInput] = React.useState('');
-  const inputLength = input.trim().length;
   const { data } = useMessageGetByRequestId({ id: requestId });
-  const socketRef = React.useRef<any>(null);
-  const [messages, setMessages] = React.useState(data?.messages || []);
+
+  const [isConnected, setIsConnected] = useState(false);
+  const [messages, setMessages] = useState<
+    { senderId: string; text: string }[]
+  >([]);
+  const [input, setInput] = useState('');
 
   // initial loading
-  React.useEffect(() => {
+  useEffect(() => {
     if (data?.messages && !messages.length) {
       setMessages(data.messages);
     }
   }, [data]);
 
-  // ws connection
-  React.useEffect(() => {
-    const socket = io(SOCKET_URL, { path: '/api/socket' });
+  useEffect(() => {
+    if (socket.connected) {
+      setIsConnected(true);
+      socket.emit('join_request', requestId);
+    }
 
-    socket.emit('join_request', requestId);
-
-    socket.on('receive_message', (newMessage) => {
-      if (newMessage.requestId === requestId) {
-        setMessages((prev) => [...prev, newMessage]);
-      }
+    socket.on('connect', () => {
+      setIsConnected(true);
+      socket.emit('join_request', requestId);
     });
 
-    socketRef.current = socket;
+    socket.on('disconnect', () => {
+      setIsConnected(false);
+    });
+
+    socket.on('receive_message', (message) => {
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
 
     return () => {
-      socket.disconnect();
+      socket.off('connect');
+      socket.off('disconnect');
+      socket.off('receive_message');
     };
   }, [requestId]);
 
-  const handleSendMessage = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (inputLength === 0 || !currentUserId || !socketRef.current) return;
+  const sendMessage = () => {
+    if (input.trim() === '' || !currentUserId) return;
 
-    const newMessage = {
+    const message = {
       requestId,
       senderId: currentUserId,
-      text: input,
+      text: input.trim(),
     };
 
-    socketRef.current.emit('send_message', newMessage);
-
+    socket.emit('send_message', message);
     setInput('');
   };
 
@@ -77,7 +82,6 @@ export function ChatCard({ requestId }: ChatCardProps) {
     <Card>
       <CardHeader>
         <CardTitle>Discuss this request</CardTitle>
-        <CardDescription>Chat with Alex Johnson</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -98,7 +102,10 @@ export function ChatCard({ requestId }: ChatCardProps) {
       </CardContent>
       <CardFooter>
         <form
-          onSubmit={handleSendMessage}
+          onSubmit={(event) => {
+            event.preventDefault();
+            sendMessage();
+          }}
           className="flex w-full items-center space-x-2"
         >
           <Input
@@ -109,7 +116,7 @@ export function ChatCard({ requestId }: ChatCardProps) {
             value={input}
             onChange={(event) => setInput(event.target.value)}
           />
-          <Button type="submit" size="icon" disabled={inputLength === 0}>
+          <Button type="submit" size="icon" disabled={!input.trim()}>
             <Send className="h-4 w-4" />
             <span className="sr-only">Send</span>
           </Button>
