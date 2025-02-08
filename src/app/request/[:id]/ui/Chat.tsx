@@ -14,20 +14,19 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { useMessageGetByRequestId } from '@/hooks/api/useMessageGetByRequestId';
+import { useSession } from 'next-auth/react';
 
-export function ChatCard() {
-  const [messages, setMessages] = React.useState([
-    {
-      role: 'user',
-      content: 'Hey, can I drop off supplies on Friday?',
-    },
-    {
-      role: 'agent',
-      content: 'Hi, it would be perfect, thank you',
-    },
-  ]);
+type ChatCardProps = {
+  requestId: string;
+};
+
+export function ChatCard({ requestId }: ChatCardProps) {
+  const { data: session } = useSession();
   const [input, setInput] = React.useState('');
   const inputLength = input.trim().length;
+  const { data } = useMessageGetByRequestId({ id: requestId });
+  const currentUserId = session?.user?.id;
 
   return (
     <>
@@ -38,17 +37,17 @@ export function ChatCard() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {messages.map((message, index) => (
+            {data?.messages?.map((message, index) => (
               <div
                 key={index}
                 className={cn(
                   'flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm',
-                  message.role === 'user'
+                  message.senderId === currentUserId
                     ? 'ml-auto bg-primary text-primary-foreground'
                     : 'bg-muted'
                 )}
               >
-                {message.content}
+                {message.text}
               </div>
             ))}
           </div>
@@ -57,15 +56,6 @@ export function ChatCard() {
           <form
             onSubmit={(event) => {
               event.preventDefault();
-              if (inputLength === 0) return;
-              setMessages([
-                ...messages,
-                {
-                  role: 'user',
-                  content: input,
-                },
-              ]);
-              setInput('');
             }}
             className="flex w-full items-center space-x-2"
           >

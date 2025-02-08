@@ -1,12 +1,17 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import apiClient from '@/lib/axios';
 
-export type MessageByIdResponse = {
+type Message = {
   id: string;
   requestId: string;
   senderId: string;
+  senderName: string;
   text: string;
   createdAt: string;
+};
+
+export type MessageByIdResponse = {
+  messages: Message[];
 };
 
 export type MessageQuery = {

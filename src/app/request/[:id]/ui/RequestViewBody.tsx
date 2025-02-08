@@ -90,7 +90,9 @@ export default function RequestViewBody() {
               <CardDescription>
                 <Flex gap="2" justify="between">
                   Paws and Claws Shelter, {request.location}
-                  <Badge color="gray">{`Due ${format(request.dueDate, 'd MMMM yyyy')}`}</Badge>
+                  {!!request.dueDate && (
+                    <Badge color="gray">{`Due ${format(request.dueDate, 'd MMMM yyyy')}`}</Badge>
+                  )}
                 </Flex>
               </CardDescription>
             </CardHeader>
@@ -99,7 +101,7 @@ export default function RequestViewBody() {
             </CardContent>
           </Card>
 
-          <ChatCard />
+          <ChatCard requestId={requestId} />
         </div>
       </Box>
     </>
