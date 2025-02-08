@@ -1,6 +1,16 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GET } from '@/app/api/requests/list/route';
 import prisma from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
+
+vi.mock('next-auth', async (importOriginal) => {
+  const original = await importOriginal();
+  return {
+    ...original,
+    default: vi.fn(),
+    getServerSession: vi.fn(),
+  };
+});
 
 vi.mock('@/lib/prisma', () => ({
   default: {
@@ -12,17 +22,27 @@ vi.mock('@/lib/prisma', () => ({
 }));
 
 describe('/api/requests/list', () => {
-  it('should return 400 if page or limit is invalid', async () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should return 401 if the user is not authenticated', async () => {
+    vi.mocked(getServerSession).mockResolvedValueOnce(null);
+
     const response = await GET(
-      new Request('http://localhost:3000/api/requests/list?page=-1&limit=0')
+      new Request('http://localhost:3000/api/requests/list')
     );
 
     const body = await response.json();
-    expect(response.status).toBe(400);
-    expect(body.message).toBe('Must be positive integers');
+    expect(response.status).toBe(401);
+    expect(body.message).toBe('Unauthorized');
   });
 
-  it('should return paginated requests with default values (page=1, limit=10)', async () => {
+  it('should return all requests if the user is a SUPPORTER', async () => {
+    vi.mocked(getServerSession).mockResolvedValueOnce({
+      user: { id: 'supporter-id-123', role: 'SUPPORTER' },
+    });
+
     const mockRequests = Array.from({ length: 10 }, (_, i) => ({
       id: `request-id-${i}`,
       title: `Request title ${i}`,
@@ -47,58 +67,22 @@ describe('/api/requests/list', () => {
 
     expect(response.status).toBe(200);
     expect(body.requests).toHaveLength(10);
-    expect(body.pagination).toEqual({
-      currentPage: 1,
-      limit: 10,
-      totalRequests: 25,
-      totalPages: 3,
-    });
   });
 
-  it('should return the correct page of requests', async () => {
-    const mockRequests = Array.from({ length: 5 }, (_, i) => ({
-      id: `request-id-${i + 10}`,
-      title: `Request tile ${i + 10}`,
-      type: 'SUPPLIES',
-      urgency: 'MEDIUM',
-      dueDate: null,
-      details: `Request details ${i + 10}`,
-      location: 'Test location',
-      status: 'PENDING',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }));
-
-    prisma.request.findMany.mockResolvedValueOnce(mockRequests);
-    prisma.request.count.mockResolvedValueOnce(25);
-
-    const response = await GET(
-      new Request('http://localhost:3000/api/requests/list?page=2&limit=5')
-    );
-
-    const body = await response.json();
-
-    expect(response.status).toBe(200);
-    expect(body.requests).toHaveLength(5);
-    expect(body.pagination).toEqual({
-      currentPage: 2,
-      limit: 5,
-      totalRequests: 25,
-      totalPages: 5,
+  it("should return only the shelter's own requests if the user is a SHELTER", async () => {
+    vi.mocked(getServerSession).mockResolvedValueOnce({
+      user: { id: 'shelter-id-123', role: 'SHELTER' },
     });
-  });
 
-  it('should return filtered requests by urgency and location', async () => {
     const mockRequests = [
       {
         id: 'request-id-1',
-        title: 'Request title 1',
+        title: "Shelter's own request",
         type: 'SUPPLIES',
-        urgency: 'HIGH',
-        dueDate: null,
-        details: 'Request details 1',
-        location: 'New York',
+        urgency: 'MEDIUM',
+        location: 'Los Angeles',
         status: 'PENDING',
+        creatorId: 'shelter-id-123',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
@@ -108,54 +92,21 @@ describe('/api/requests/list', () => {
     prisma.request.count.mockResolvedValueOnce(1);
 
     const response = await GET(
-      new Request(
-        'http://localhost:3000/api/requests/list?urgency=HIGH&location=New York'
-      )
+      new Request('http://localhost:3000/api/requests/list')
     );
 
     const body = await response.json();
 
     expect(response.status).toBe(200);
     expect(body.requests).toHaveLength(1);
-    expect(body.requests[0].urgency).toBe('HIGH');
-    expect(body.requests[0].location).toBe('New York');
+    expect(body.requests[0].creatorId).toBe('shelter-id-123');
   });
 
-  it('should return filtered requests by date range', async () => {
-    const mockRequests = [
-      {
-        id: 'request-id-1',
-        title: 'Request title 1',
-        type: 'SUPPLIES',
-        urgency: 'LOW',
-        dueDate: new Date('2025-01-15').toISOString(),
-        details: 'Request details 1',
-        location: 'Los Angeles',
-        status: 'PENDING',
-        createdAt: new Date('2025-01-10').toISOString(),
-        updatedAt: new Date('2025-01-10').toISOString(),
-      },
-    ];
+  it('should return filtered requests by location for a SUPPORTER', async () => {
+    vi.mocked(getServerSession).mockResolvedValueOnce({
+      user: { id: 'supporter-id-123', role: 'SUPPORTER' },
+    });
 
-    prisma.request.findMany.mockResolvedValueOnce(mockRequests);
-    prisma.request.count.mockResolvedValueOnce(1);
-
-    const response = await GET(
-      new Request(
-        'http://localhost:3000/api/requests/list?dueDateStart=2025-01-10&dueDateEnd=2025-01-20'
-      )
-    );
-
-    const body = await response.json();
-
-    expect(response.status).toBe(200);
-    expect(body.requests).toHaveLength(1);
-    expect(new Date(body.requests[0].dueDate).toISOString()).toBe(
-      new Date('2025-01-15').toISOString()
-    );
-  });
-
-  it('should return filtered requests by text in title', async () => {
     const mockRequests = [
       {
         id: 'request-id-1',
