@@ -20,6 +20,7 @@ export const authOptions = {
 
         const user = await prisma.user.findUnique({
           where: { email },
+          include: { role: true },
         });
 
         if (!user) {
@@ -39,7 +40,7 @@ export const authOptions = {
           id: user.id,
           email: user.email,
           name: user.name,
-          role: user.role,
+          role: user.role?.name || 'SUPPORTER',
         };
       },
     }),
@@ -59,13 +60,12 @@ export const authOptions = {
 
       const updatedUser = await prisma.user.findUnique({
         where: { id: token.id },
+        include: { role: true },
       });
-      if (updatedUser) {
-        if (token.name !== updatedUser.name) {
-          token.name = updatedUser.name;
-        }
-        if (token.role !== updatedUser.role) {
-          token.role = updatedUser.role;
+
+      if (updatedUser && updatedUser.role) {
+        if (token.role !== updatedUser.role.name) {
+          token.role = updatedUser.role.name;
         }
       }
 

@@ -11,7 +11,7 @@ export type VerifyEmailResponse = {
 };
 
 const verifyEmail = (data: VerifyEmailData): Promise<VerifyEmailResponse> => {
-  return apiClient.post('/register/confirm', data);
+  return apiClient.post('/auth/confirm-email', data);
 };
 
 export function useVerifyEmail(

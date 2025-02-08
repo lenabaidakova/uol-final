@@ -15,24 +15,12 @@ export async function GET(request: Request) {
     const userId = session.user.id;
     const userRole = session.user.role;
 
-    const { searchParams } = new URL(request.url);
+    const { searchParams = new Map() } = new URL(request.url);
 
     // get page and limit from query parameters
     const page = parseInt(searchParams.get('page') || '1', 10);
     const limit = parseInt(searchParams.get('limit') || '10', 10);
 
-    // filters
-    const urgency = searchParams.get('urgency') || undefined;
-    const location = searchParams.get('location') || undefined;
-    const type = searchParams.get('type') || undefined;
-    const status = searchParams.get('status') || undefined;
-    const text = searchParams.get('text') || undefined;
-    const dueDateStart = searchParams.get('dueDateStart') || undefined;
-    const dueDateEnd = searchParams.get('dueDateEnd') || undefined;
-    const createdDateStart = searchParams.get('createdDateStart') || undefined;
-    const createdDateEnd = searchParams.get('createdDateEnd') || undefined;
-
-    // validate page and limit
     if (page < 1 || limit < 1) {
       return NextResponse.json(
         { message: 'Must be positive integers' },
@@ -42,27 +30,72 @@ export async function GET(request: Request) {
 
     const skip = (page - 1) * limit;
 
+    // filters
+    const typeName = searchParams.get('type');
+    const urgencyName = searchParams.get('urgency');
+    const statusName = searchParams.get('status');
+
+    let typeId, urgencyId, statusId;
+    if (typeName) {
+      const typeRecord = await prisma.requestType.findUnique({
+        where: { name: typeName },
+        select: { id: true },
+      });
+      typeId = typeRecord?.id;
+    }
+    if (urgencyName) {
+      const urgencyRecord = await prisma.requestUrgency.findUnique({
+        where: { name: urgencyName },
+        select: { id: true },
+      });
+      urgencyId = urgencyRecord?.id;
+    }
+    if (statusName) {
+      const statusRecord = await prisma.requestStatus.findUnique({
+        where: { name: statusName },
+        select: { id: true },
+      });
+      statusId = statusRecord?.id;
+    }
+
     // build where condition
-    const where: any = {};
-    if (urgency) where.urgency = urgency;
-    if (location) where.location = { contains: location.toLowerCase() };
-    if (type) where.type = type;
-    if (status) where.status = status;
-    if (text) where.title = { contains: text.toLowerCase() };
-    if (dueDateStart || dueDateEnd) {
-      where.dueDate = {};
-      if (dueDateStart) where.dueDate.gte = new Date(dueDateStart);
-      if (dueDateEnd) where.dueDate.lte = new Date(dueDateEnd);
-    }
-    if (createdDateStart || createdDateEnd) {
-      where.createdAt = {};
-      if (createdDateStart) where.createdAt.gte = new Date(createdDateStart);
-      if (createdDateEnd) where.createdAt.lte = new Date(createdDateEnd);
-    }
+    const where = {
+      ...(typeId && { typeId }),
+      ...(urgencyId && { urgencyId }),
+      ...(statusId && { statusId }),
+      ...(searchParams.get('location') && {
+        location: { contains: searchParams.get('location').toLowerCase() },
+      }),
+      ...(searchParams.get('text') && {
+        title: { contains: searchParams.get('text').toLowerCase() },
+      }),
+      ...((searchParams.get('dueDateStart') ||
+        searchParams.get('dueDateEnd')) && {
+        dueDate: {
+          ...(searchParams.get('dueDateStart') && {
+            gte: new Date(searchParams.get('dueDateStart')),
+          }),
+          ...(searchParams.get('dueDateEnd') && {
+            lte: new Date(searchParams.get('dueDateEnd')),
+          }),
+        },
+      }),
+      ...((searchParams.get('createdDateStart') ||
+        searchParams.get('createdDateEnd')) && {
+        createdAt: {
+          ...(searchParams.get('createdDateStart') && {
+            gte: new Date(searchParams.get('createdDateStart')),
+          }),
+          ...(searchParams.get('createdDateEnd') && {
+            lte: new Date(searchParams.get('createdDateEnd')),
+          }),
+        },
+      }),
+    };
 
     // filter by role
     if (userRole === 'SHELTER') {
-      where.creatorId = userId; // shelters can see only their own requests
+      where.creatorId = userId;
     }
 
     // fetch requests with filters and pagination
@@ -72,12 +105,27 @@ export async function GET(request: Request) {
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' }, // order by most recent
+        include: {
+          type: { select: { name: true } },
+          urgency: { select: { name: true } },
+          status: { select: { name: true } },
+        },
       }),
       prisma.request.count({ where }),
     ]);
 
     return NextResponse.json({
-      requests,
+      requests: requests.map((req) => ({
+        id: req.id,
+        title: req.title,
+        type: req.type.name,
+        urgency: req.urgency.name,
+        status: req.status.name,
+        dueDate: req.dueDate,
+        details: req.details,
+        location: req.location,
+        creatorId: req.creatorId,
+      })),
       pagination: {
         currentPage: page,
         limit,

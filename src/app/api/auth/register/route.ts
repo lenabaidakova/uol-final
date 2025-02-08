@@ -17,9 +17,13 @@ export async function POST(request: Request) {
       );
     }
 
-    if (role !== 'SUPPORTER' && role !== 'SHELTER') {
+    const roleRecord = await prisma.role.findUnique({
+      where: { name: role },
+    });
+
+    if (!roleRecord) {
       return NextResponse.json(
-        { message: 'Role should be supporter or shelter' },
+        { message: 'Invalid role. Allowed values: SUPPORTER, SHELTER' },
         { status: 400 }
       );
     }
@@ -41,7 +45,7 @@ export async function POST(request: Request) {
       data: {
         email,
         password: hashedPassword,
-        role,
+        roleId: roleRecord.id,
         name,
         verified: false,
         confirmationToken,

@@ -61,6 +61,46 @@ export async function PATCH(request: Request) {
       }
     }
 
+    // convert type, urgency, and status IDs
+    if (dataToUpdate.type) {
+      const typeRecord = await prisma.requestType.findUnique({
+        where: { name: dataToUpdate.type },
+      });
+      if (!typeRecord)
+        return NextResponse.json(
+          { message: `Invalid request type: ${dataToUpdate.type}` },
+          { status: 400 }
+        );
+      dataToUpdate.typeId = typeRecord.id;
+      delete dataToUpdate.type;
+    }
+
+    if (dataToUpdate.urgency) {
+      const urgencyRecord = await prisma.requestUrgency.findUnique({
+        where: { name: dataToUpdate.urgency },
+      });
+      if (!urgencyRecord)
+        return NextResponse.json(
+          { message: `Invalid urgency level: ${dataToUpdate.urgency}` },
+          { status: 400 }
+        );
+      dataToUpdate.urgencyId = urgencyRecord.id;
+      delete dataToUpdate.urgency;
+    }
+
+    if (dataToUpdate.status) {
+      const statusRecord = await prisma.requestStatus.findUnique({
+        where: { name: dataToUpdate.status },
+      });
+      if (!statusRecord)
+        return NextResponse.json(
+          { message: `Invalid request status: ${dataToUpdate.status}` },
+          { status: 400 }
+        );
+      dataToUpdate.statusId = statusRecord.id;
+      delete dataToUpdate.status;
+    }
+
     if (Object.keys(dataToUpdate).length === 0) {
       return NextResponse.json(
         { message: 'No valid fields to update' },

@@ -3,9 +3,6 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import prisma from '@/lib/prisma';
 
-const validUrgencies = ['HIGH', 'MEDIUM', 'LOW'];
-const validTypes = ['SUPPLIES', 'SERVICES', 'VOLUNTEERS'];
-
 export async function POST(request: Request) {
   try {
     // get session
@@ -36,20 +33,23 @@ export async function POST(request: Request) {
     }
 
     // validate urgency and type
-    if (!validUrgencies.includes(urgency)) {
+    const typeRecord = await prisma.requestType.findUnique({
+      where: { name: type },
+    });
+    const urgencyRecord = await prisma.requestUrgency.findUnique({
+      where: { name: urgency },
+    });
+
+    if (!typeRecord) {
       return NextResponse.json(
-        {
-          message: `Invalid urgency level. Must be one of: ${validUrgencies.join(', ')}`,
-        },
+        { message: `Invalid request type: ${type}` },
         { status: 400 }
       );
     }
 
-    if (!validTypes.includes(type)) {
+    if (!urgencyRecord) {
       return NextResponse.json(
-        {
-          message: `Invalid request type. Must be one of: ${validTypes.join(', ')}`,
-        },
+        { message: `Invalid urgency level: ${urgency}` },
         { status: 400 }
       );
     }
@@ -58,8 +58,8 @@ export async function POST(request: Request) {
     const newRequest = await prisma.request.create({
       data: {
         title,
-        type,
-        urgency,
+        typeId: typeRecord.id,
+        urgencyId: urgencyRecord.id,
         dueDate: dueDate ? new Date(dueDate) : null,
         details,
         location,

@@ -5,6 +5,47 @@ const bcrypt = require('bcrypt');
 async function main() {
   console.log('Seeding database...');
 
+  await prisma.role.createMany({
+    data: [{ name: 'SUPPORTER' }, { name: 'SHELTER' }, { name: 'ADMIN' }],
+  });
+
+  await prisma.requestType.createMany({
+    data: [{ name: 'SUPPLIES' }, { name: 'SERVICES' }, { name: 'VOLUNTEERS' }],
+  });
+
+  await prisma.requestUrgency.createMany({
+    data: [{ name: 'HIGH' }, { name: 'MEDIUM' }, { name: 'LOW' }],
+  });
+
+  await prisma.requestStatus.createMany({
+    data: [
+      { name: 'PENDING' },
+      { name: 'IN_PROGRESS' },
+      { name: 'COMPLETED' },
+      { name: 'ARCHIVED' },
+    ],
+  });
+
+  const getRoleId = async (name) => {
+    const role = await prisma.role.findUnique({ where: { name } });
+    return role.id;
+  };
+
+  const getTypeId = async (name) => {
+    const type = await prisma.requestType.findUnique({ where: { name } });
+    return type.id;
+  };
+
+  const getUrgencyId = async (name) => {
+    const urgency = await prisma.requestUrgency.findUnique({ where: { name } });
+    return urgency.id;
+  };
+
+  const getStatusId = async (name) => {
+    const status = await prisma.requestStatus.findUnique({ where: { name } });
+    return status.id;
+  };
+
   const hashedPassword = await bcrypt.hash('password123', 10);
 
   const shelter1 = await prisma.user.create({
@@ -12,7 +53,7 @@ async function main() {
       email: 'shelter1@example.com',
       name: 'Shelter A',
       password: hashedPassword,
-      role: 'SHELTER',
+      roleId: await getRoleId('SHELTER'),
       verified: true,
     },
   });
@@ -22,7 +63,7 @@ async function main() {
       email: 'shelter2@example.com',
       name: 'Shelter B',
       password: hashedPassword,
-      role: 'SHELTER',
+      roleId: await getRoleId('SHELTER'),
       verified: true,
     },
   });
@@ -32,7 +73,7 @@ async function main() {
       email: 'supporter1@example.com',
       name: 'Supporter One',
       password: hashedPassword,
-      role: 'SUPPORTER',
+      roleId: await getRoleId('SUPPORTER'),
       verified: true,
     },
   });
@@ -42,7 +83,7 @@ async function main() {
       email: 'supporter2@example.com',
       name: 'Supporter Two',
       password: hashedPassword,
-      role: 'SUPPORTER',
+      roleId: await getRoleId('SUPPORTER'),
       verified: true,
     },
   });
@@ -115,7 +156,19 @@ async function main() {
 
   const createdRequests = [];
   for (const request of sampleRequests) {
-    const createdRequest = await prisma.request.create({ data: request });
+    const createdRequest = await prisma.request.create({
+      data: {
+        title: request.title,
+        typeId: await getTypeId(request.type),
+        urgencyId: await getUrgencyId(request.urgency),
+        statusId: await getStatusId(request.status),
+        dueDate: request.dueDate,
+        details: request.details,
+        location: request.location,
+        creatorId: request.creatorId,
+        assignedToId: request.assignedToId,
+      },
+    });
     createdRequests.push(createdRequest);
   }
 

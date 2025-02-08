@@ -44,10 +44,21 @@ export async function PATCH(request: Request) {
       );
     }
 
+    const archivedStatus = await prisma.requestStatus.findUnique({
+      where: { name: 'ARCHIVED' },
+    });
+
+    if (!archivedStatus) {
+      return NextResponse.json(
+        { message: 'ARCHIVED status not found' },
+        { status: 500 }
+      );
+    }
+
     // archive request
     const updatedRequest = await prisma.request.update({
       where: { id },
-      data: { status: 'ARCHIVED' },
+      data: { statusId: archivedStatus.id },
     });
 
     return NextResponse.json(

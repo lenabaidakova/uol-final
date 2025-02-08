@@ -23,7 +23,7 @@ export type RegistrationResponse = {
 const registerUser = (
   data: RegistrationData
 ): Promise<RegistrationResponse> => {
-  return apiClient.post('/register', data);
+  return apiClient.post('/auth/register', data);
 };
 
 export function useRegister(

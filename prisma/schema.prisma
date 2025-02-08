@@ -7,12 +7,37 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Role {
+  id    String @id @default(cuid())
+  name  String @unique // SUPPORTER, SHELTER
+  users User[]
+}
+
+model RequestType {
+  id    String @id @default(cuid())
+  name  String @unique // SUPPLIES, SERVICES, VOLUNTEERS
+  requests Request[]
+}
+
+model RequestUrgency {
+  id    String @id @default(cuid())
+  name  String @unique // HIGH, MEDIUM, LOW
+  requests Request[]
+}
+
+model RequestStatus {
+  id    String @id @default(cuid())
+  name  String @unique // PENDING, IN_PROGRESS, COMPLETED, ARCHIVED
+  requests Request[]
+}
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
   name      String
   password  String
-  role      String   @default("SUPPORTER")
+  roleId    String
+  role      Role     @relation(fields: [roleId], references: [id])
   verified  Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -26,14 +51,17 @@ model User {
 model Request {
   id          String   @id @default(cuid())
   title       String
-  type        String   // SUPPLIES, SERVICES, VOLUNTEERS
-  urgency     String   // HIGH, MEDIUM, LOW
+  typeId      String
+  type        RequestType @relation(fields: [typeId], references: [id])
+  urgencyId   String
+  urgency     RequestUrgency @relation(fields: [urgencyId], references: [id])
+  statusId    String
+  status      RequestStatus @relation(fields: [statusId], references: [id])
   dueDate     DateTime?
   details     String
   location    String
-  status      String   @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED, ARCHIVED
   creatorId   String
-  creator     User     @relation(fields: [creatorId], references: [id])
+  creator     User @relation(fields: [creatorId], references: [id])
 
   assignedToId String? // supporter who took this request
   assignedTo   User?   @relation("AssignedRequests", fields: [assignedToId], references: [id]) // supporter who took this request
