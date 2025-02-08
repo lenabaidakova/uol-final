@@ -1,8 +1,20 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 export async function GET(request: Request) {
   try {
+    const session = await getServerSession(authOptions);
+
+    // check if user is authenticated
+    if (!session || !session.user) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const userId = session.user.id;
+    const userRole = session.user.role;
+
     const { searchParams } = new URL(request.url);
 
     // get page and limit from query parameters
@@ -46,6 +58,11 @@ export async function GET(request: Request) {
       where.createdAt = {};
       if (createdDateStart) where.createdAt.gte = new Date(createdDateStart);
       if (createdDateEnd) where.createdAt.lte = new Date(createdDateEnd);
+    }
+
+    // filter by role
+    if (userRole === 'SHELTER') {
+      where.creatorId = userId; // shelters can see only their own requests
     }
 
     // fetch requests with filters and pagination
