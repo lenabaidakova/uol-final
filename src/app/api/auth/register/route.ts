@@ -41,14 +41,21 @@ export async function POST(request: Request) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const confirmationToken = crypto.randomBytes(32).toString('hex');
 
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
         roleId: roleRecord.id,
         name,
         verified: false,
-        confirmationToken,
+      },
+    });
+
+    // store confirmation token in UserConfirmationToken table
+    await prisma.userConfirmationToken.create({
+      data: {
+        userId: user.id,
+        token: confirmationToken,
       },
     });
 

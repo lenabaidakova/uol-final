@@ -6,7 +6,7 @@ async function main() {
   console.log('Seeding database...');
 
   await prisma.role.createMany({
-    data: [{ name: 'SUPPORTER' }, { name: 'SHELTER' }, { name: 'ADMIN' }],
+    data: [{ name: 'SUPPORTER' }, { name: 'SHELTER' }],
   });
 
   await prisma.requestType.createMany({

@@ -9,6 +9,9 @@ vi.mock('@/lib/prisma', () => ({
       update: vi.fn(),
       findUnique: vi.fn(),
     },
+    requestStatus: {
+      findUnique: vi.fn(),
+    },
   },
 }));
 
@@ -114,6 +117,10 @@ describe('/api/requests/archive', () => {
       creatorId: 'user-id-123',
     });
 
+    prisma.requestStatus.findUnique.mockResolvedValueOnce({
+      id: 'archived-id',
+    });
+
     const mockRequest = {
       id: 'existing-id',
       title: 'Need Blankets',
@@ -122,7 +129,7 @@ describe('/api/requests/archive', () => {
       dueDate: '2025-02-01T00:00:00.000Z',
       details: 'We need blankets for winter.',
       location: 'New York',
-      status: 'ARCHIVED',
+      statusId: 'archived-id',
       createdAt: '2025-01-19T12:34:56.000Z',
       updatedAt: '2025-01-19T13:00:00.000Z',
     };

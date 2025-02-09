@@ -41,12 +41,19 @@ model User {
   verified  Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  confirmationToken String?
   requests  Request[] // user can have many requests
   messages  Message[] // user can send many messages
   assignedRequests Request[] @relation("AssignedRequests") // user can take requests in progress
   unreadMessages   UnreadMessage[] // track unread messages per user
+  confirmationToken UserConfirmationToken?
 }
+
+model UserConfirmationToken {
+  userId    String @id
+  token     String @unique
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 
 model Request {
   id          String   @id @default(cuid())

@@ -12,11 +12,12 @@ export async function POST(request: Request) {
       );
     }
 
-    const user = await prisma.user.findUnique({
-      where: { confirmationToken: token },
+    const tokenData = await prisma.userConfirmationToken.findUnique({
+      where: { token },
+      include: { user: true },
     });
 
-    if (!user || user.verified) {
+    if (!tokenData || tokenData.user.verified) {
       return NextResponse.json(
         { message: 'Invalid or expired token' },
         { status: 400 }
@@ -24,8 +25,13 @@ export async function POST(request: Request) {
     }
 
     await prisma.user.update({
-      where: { id: user.id },
-      data: { verified: true, confirmationToken: null },
+      where: { id: tokenData.user.id },
+      data: { verified: true },
+    });
+
+    // remove used token
+    await prisma.userConfirmationToken.delete({
+      where: { token },
     });
 
     return NextResponse.json(
@@ -33,6 +39,7 @@ export async function POST(request: Request) {
       { status: 200 }
     );
   } catch (error) {
+    console.error('Error confirming email:', error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }

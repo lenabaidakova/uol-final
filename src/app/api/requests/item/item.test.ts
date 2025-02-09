@@ -2,13 +2,15 @@ import { describe, it, expect, vi } from 'vitest';
 import { GET } from '@/app/api/requests/item/route';
 import prisma from '@/lib/prisma';
 
-vi.mock('@/lib/prisma', () => ({
-  default: {
-    request: {
-      findUnique: vi.fn(),
+vi.mock('@/lib/prisma', () => {
+  return {
+    default: {
+      request: {
+        findUnique: vi.fn(),
+      },
     },
-  },
-}));
+  };
+});
 
 describe('/api/requests/item', () => {
   it('should return 400 if id is not provided', async () => {
@@ -37,18 +39,18 @@ describe('/api/requests/item', () => {
     const mockRequest = {
       id: 'request-id-123',
       title: 'Food donation needed',
-      type: 'SUPPLIES',
-      urgency: 'MEDIUM',
+      type: { name: 'SUPPLIES' },
+      urgency: { name: 'MEDIUM' },
+      status: { name: 'PENDING' },
       dueDate: null,
       details: 'Request details',
       location: 'Chicago',
-      status: 'PENDING',
+      creatorId: 'user-id-456',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      creatorId: 'user-id-456',
     };
 
-    prisma.request.findUnique.mockResolvedValueOnce(mockRequest);
+    vi.mocked(prisma.request.findUnique).mockResolvedValueOnce(mockRequest);
 
     const response = await GET(
       new Request('http://localhost:3000/api/requests/item?id=request-id-123')
@@ -56,6 +58,16 @@ describe('/api/requests/item', () => {
 
     const body = await response.json();
     expect(response.status).toBe(200);
-    expect(body.request).toEqual(mockRequest);
+    expect(body.request).toEqual({
+      id: 'request-id-123',
+      title: 'Food donation needed',
+      type: 'SUPPLIES',
+      urgency: 'MEDIUM',
+      status: 'PENDING',
+      dueDate: null,
+      details: 'Request details',
+      location: 'Chicago',
+      creatorId: 'user-id-456',
+    });
   });
 });

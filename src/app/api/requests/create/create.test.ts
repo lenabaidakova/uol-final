@@ -1,28 +1,29 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { POST } from '@/app/api/requests/create/route';
+import prisma from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
 
 vi.mock('next-auth', async (importOriginal) => {
   const original = await importOriginal();
   return {
     ...original,
-    default: vi.fn(),
     getServerSession: vi.fn(),
   };
 });
 
-vi.mock('@/lib/prisma', async (importOriginal) => {
-  const original = await importOriginal();
-  return {
-    ...original,
-    default: {
-      request: {
-        create: vi.fn(),
-      },
+vi.mock('@/lib/prisma', () => ({
+  default: {
+    request: {
+      create: vi.fn(),
     },
-  };
-});
-
-import prisma from '@/lib/prisma';
+    requestType: {
+      findUnique: vi.fn(),
+    },
+    requestUrgency: {
+      findUnique: vi.fn(),
+    },
+  },
+}));
 
 describe('/api/requests/create', () => {
   beforeEach(() => {
@@ -30,7 +31,6 @@ describe('/api/requests/create', () => {
   });
 
   it('should return 401 if the user is not authenticated', async () => {
-    const { getServerSession } = await import('next-auth');
     vi.mocked(getServerSession).mockResolvedValueOnce(null);
 
     const response = await POST(
@@ -54,7 +54,6 @@ describe('/api/requests/create', () => {
   });
 
   it('should return 403 if the user does not have the SHELTER role', async () => {
-    const { getServerSession } = await import('next-auth');
     vi.mocked(getServerSession).mockResolvedValueOnce({
       user: { id: '123', role: 'SUPPORTER' },
     });
@@ -82,23 +81,29 @@ describe('/api/requests/create', () => {
   });
 
   it('should return 201 if the request is successfully created', async () => {
-    const { getServerSession } = await import('next-auth');
     vi.mocked(getServerSession).mockResolvedValueOnce({
       user: { id: '123', role: 'SHELTER' },
     });
 
-    vi.mocked(prisma.request.create).mockResolvedValueOnce({
+    prisma.requestType.findUnique.mockResolvedValueOnce({ id: 'type-id' });
+    prisma.requestUrgency.findUnique.mockResolvedValueOnce({
+      id: 'urgency-id',
+    });
+
+    const mockRequest = {
       id: 'request-id-123',
       title: 'Need blankets',
-      type: 'SUPPLIES',
-      urgency: 'HIGH',
-      dueDate: new Date('2025-02-01'),
+      typeId: 'type-id',
+      urgencyId: 'urgency-id',
+      dueDate: '2025-02-01T00:00:00.000Z',
       details: 'We need 100 blankets for the winter season.',
       location: 'New York',
       creatorId: '123',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
+      createdAt: '2025-02-01T00:00:00.000Z',
+      updatedAt: '2025-02-01T00:00:00.000Z',
+    };
+
+    prisma.request.create.mockResolvedValueOnce(mockRequest);
 
     const response = await POST(
       new Request('http://localhost:3000/api/requests/create', {
@@ -116,17 +121,8 @@ describe('/api/requests/create', () => {
     );
 
     const body = await response.json();
-
     expect(response.status).toBe(201);
     expect(body.message).toBe('Request created successfully');
-    expect(body.request).toHaveProperty('id');
-    expect(body.request.title).toBe('Need blankets');
-    expect(body.request.type).toBe('SUPPLIES');
-    expect(body.request.urgency).toBe('HIGH');
-    expect(body.request.details).toBe(
-      'We need 100 blankets for the winter season.'
-    );
-    expect(body.request.location).toBe('New York');
-    expect(body.request.creatorId).toBe('123');
+    expect(body.request).toEqual(mockRequest);
   });
 });

@@ -3,14 +3,25 @@ import { PATCH } from '@/app/api/requests/update/route';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 
-vi.mock('@/lib/prisma', () => ({
-  default: {
-    request: {
-      update: vi.fn(),
-      findUnique: vi.fn(),
+vi.mock('@/lib/prisma', () => {
+  return {
+    default: {
+      request: {
+        findUnique: vi.fn(),
+        update: vi.fn(),
+      },
+      requestType: {
+        findUnique: vi.fn(),
+      },
+      requestUrgency: {
+        findUnique: vi.fn(),
+      },
+      requestStatus: {
+        findUnique: vi.fn(),
+      },
     },
-  },
-}));
+  };
+});
 
 vi.mock('next-auth', async (importOriginal) => {
   const original = await importOriginal();
@@ -114,15 +125,21 @@ describe('/api/requests/update', () => {
       creatorId: 'user-id-123',
     });
 
+    prisma.requestType.findUnique.mockResolvedValueOnce({ id: 'type-id' });
+    prisma.requestUrgency.findUnique.mockResolvedValueOnce({
+      id: 'urgency-id',
+    });
+    prisma.requestStatus.findUnique.mockResolvedValueOnce({ id: 'status-id' });
+
     const mockRequest = {
       id: 'existing-id',
       title: 'Updated title',
-      type: 'SUPPLIES',
-      urgency: 'MEDIUM',
+      typeId: 'type-id',
+      urgencyId: 'urgency-id',
+      statusId: 'status-id',
       dueDate: '2025-02-01T00:00:00.000Z',
       details: 'Updated details',
       location: 'Updated location',
-      status: 'IN_PROGRESS',
       createdAt: '2025-01-19T12:34:56.000Z',
       updatedAt: '2025-01-19T13:00:00.000Z',
     };
