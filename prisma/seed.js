@@ -5,18 +5,22 @@ const bcrypt = require('bcrypt');
 async function main() {
   console.log('Seeding database...');
 
+  // seeding roles
   await prisma.role.createMany({
     data: [{ name: 'SUPPORTER' }, { name: 'SHELTER' }],
   });
 
+  // seeding request types
   await prisma.requestType.createMany({
     data: [{ name: 'SUPPLIES' }, { name: 'SERVICES' }, { name: 'VOLUNTEERS' }],
   });
 
+  // seeding urgency
   await prisma.requestUrgency.createMany({
     data: [{ name: 'HIGH' }, { name: 'MEDIUM' }, { name: 'LOW' }],
   });
 
+  // seeding statuses
   await prisma.requestStatus.createMany({
     data: [
       { name: 'PENDING' },
