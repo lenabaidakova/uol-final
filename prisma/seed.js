@@ -126,16 +126,6 @@ async function main() {
       assignedToId: null,
     },
     {
-      title: 'Dog training services required',
-      type: 'SERVICES',
-      urgency: 'HIGH',
-      details: 'We need professional training services for 5 rescue dogs',
-      location: 'Manchester',
-      status: 'PENDING',
-      creatorId: shelter2.id,
-      assignedToId: supporter1.id,
-    },
-    {
       title: 'Seeking transport volunteers',
       type: 'VOLUNTEERS',
       urgency: 'MEDIUM',
@@ -146,16 +136,27 @@ async function main() {
       creatorId: shelter1.id,
       assignedToId: null,
     },
-    ...Array.from({ length: 15 }, (_, index) => ({
-      title: `General request #${index + 6}`,
-      type: index % 2 === 0 ? 'SUPPLIES' : 'SERVICES',
-      urgency: index % 3 === 0 ? 'HIGH' : index % 3 === 1 ? 'MEDIUM' : 'LOW',
-      dueDate: index % 5 === 0 ? new Date('2025-04-01') : null,
-      details: `Details for request #${index + 6}.`,
-      location: index % 2 === 0 ? 'London' : 'Manchester',
-      status: index % 4 === 0 ? 'PENDING' : 'IN_PROGRESS',
-      creatorId: index % 2 === 0 ? shelter1.id : shelter2.id,
-    })),
+    ...Array.from({ length: 15 }, (_, index) => {
+      const assignedTo =
+        index % 3 === 0
+          ? supporter1.id
+          : index % 3 === 1
+            ? supporter2.id
+            : null;
+      const status = assignedTo || index % 4 === 3 ? 'IN_PROGRESS' : 'PENDING';
+
+      return {
+        title: `General request #${index + 6}`,
+        type: index % 2 === 0 ? 'SUPPLIES' : 'SERVICES',
+        urgency: index % 3 === 0 ? 'HIGH' : index % 3 === 1 ? 'MEDIUM' : 'LOW',
+        dueDate: index % 5 === 0 ? new Date('2025-04-01') : null,
+        details: `Details for request #${index + 6}.`,
+        location: index % 2 === 0 ? 'London' : 'Manchester',
+        status,
+        creatorId: index % 2 === 0 ? shelter1.id : shelter2.id,
+        assignedToId: status === 'IN_PROGRESS' ? assignedTo : null,
+      };
+    }),
   ];
 
   const createdRequests = [];

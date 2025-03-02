@@ -1,74 +1,76 @@
+import * as React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { appRoutes } from '@/lib/appRoutes';
+import { Link, Skeleton } from '@radix-ui/themes';
+import { format } from 'date-fns';
 
-const items = [
-  {
-    id: 'rte',
-    request: 'Vet assistance for stray dog',
-    supporter: 'Jane Supporter',
-    initials: 'JS',
-    date: 'Dec 4',
-  },
-  {
-    id: 'rte1',
-    request: 'Blankets for winter',
-    supporter: 'John Doe',
-    initials: 'JD',
-    date: 'Dec 3',
-  },
-  {
-    id: 'rte2',
-    request: 'Food donations',
-    initials: 'FD',
-    supporter: 'Local Food Bank',
-    date: 'Dec 2',
-  },
-  {
-    id: 'rte3',
-    request: 'Cat litter supplies',
-    supporter: 'Alice Brown',
-    initials: 'AB',
-    date: 'Dec 4',
-  },
-  {
-    id: 'rte4',
-    request: 'Dog toys and treats',
-    supporter: 'Michael Green',
-    initials: 'MG',
-    date: 'Dec 3',
-  },
-  {
-    id: 'rte5',
-    request: 'Heating support for shelter',
-    supporter: 'Community Help Group',
-    initials: 'CHG',
-    date: 'Dec 2',
-  },
-];
+type RecentRequest = {
+  id: string;
+  title: string;
+  supporter?: { name: string } | null;
+  updatedAt: string;
+};
 
-export function RecentRequestsInProgress() {
+type RecentRequestsInProgressProps = {
+  data: RecentRequest[];
+  isLoading?: boolean;
+};
+
+export function RecentRequestsInProgress({
+  data,
+  isLoading,
+}: RecentRequestsInProgressProps) {
+  if (isLoading) {
+    return (
+      <div className="space-y-8">
+        {[...Array(3)].map((_, i) => (
+          <div className="flex items-center" key={i}>
+            <Skeleton className="h-9 w-9 rounded-full" />
+            <div className="ml-4 space-y-1">
+              <Skeleton className="h-4 w-48" />
+              <Skeleton className="h-3 w-32" />
+            </div>
+            <Skeleton className="ml-auto h-3 w-12" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
-      {items.map((item, i) => (
-        <div className="flex items-center" key={i}>
-          <Avatar className="h-9 w-9">
-            <AvatarImage
-              src={`https://robohash.org/${item.id}.png?set=set4&size=150x150`}
-              alt="Avatar"
-            />
-            <AvatarFallback>JS</AvatarFallback>
-          </Avatar>
-          <div className="ml-4 space-y-1">
-            <a
-              href="#"
-              className="text-sm font-medium leading-none hover:underline"
-            >
-              {item.request}
-            </a>
-            <p className="text-sm text-muted-foreground">{item.supporter}</p>
+      {data.map((item) => {
+        const initials = item.supporter?.name
+          ? item.supporter.name
+              .split(' ')
+              .map((n) => n[0])
+              .join('')
+              .toUpperCase()
+          : 'SP';
+
+        return (
+          <div className="flex items-center" key={item.id}>
+            <Avatar className="h-9 w-9">
+              <AvatarImage
+                src={`https://robohash.org/${item.id}.png?set=set4&size=150x150`}
+                alt="Avatar"
+              />
+              <AvatarFallback>{initials}</AvatarFallback>
+            </Avatar>
+            <div className="ml-4 space-y-1">
+              <Link color="gray" href={appRoutes.request(item.id)}>
+                {item.title}
+              </Link>
+              <p className="text-sm text-muted-foreground">
+                {item.supporter?.name || 'Unknown supporter'}
+              </p>
+            </div>
+            <div className="ml-auto text-sm">
+              {format(new Date(item.updatedAt), 'MMM d')}
+            </div>
           </div>
-          <div className="ml-auto text-sm">{item.date}</div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
