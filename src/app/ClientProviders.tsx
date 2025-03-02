@@ -9,7 +9,7 @@ import {
 } from '@tanstack/react-query';
 import { ThemeProvider } from 'next-themes';
 import { Theme } from '@radix-ui/themes';
-import { RoleProvider } from '@/providers/RoleProvider';
+import { UserProvider } from '@/providers/UserProvider';
 import { SessionProvider } from 'next-auth/react';
 import { Toaster } from '@/components/ui/toaster';
 import { ApiError } from '@/types/Api';
@@ -49,11 +49,11 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
     <SessionProvider>
       <QueryClientProvider client={queryClient}>
         <Theme accentColor="grass">
-          <RoleProvider>
+          <UserProvider>
             {children}
 
             <Toaster />
-          </RoleProvider>
+          </UserProvider>
         </Theme>
       </QueryClientProvider>
     </SessionProvider>
