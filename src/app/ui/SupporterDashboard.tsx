@@ -1,5 +1,5 @@
 import PageHeader from '@/app/ui/PageHeader';
-import { Box, Grid } from '@radix-ui/themes';
+import { Box, Grid, Skeleton } from '@radix-ui/themes';
 import {
   Card,
   CardHeader,
@@ -8,18 +8,21 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import { Check, Clipboard, MessageCircle } from 'lucide-react';
-import { DatePickerWithRange } from '@/app/ui/DatePickerWithRange';
 import React from 'react';
 import { SupporterRequestsInProgress } from '@/app/ui/SupporterRequestsInProgress';
 import SupporterRequestsSuggested from '@/app/ui/SupporterRequestsSuggested';
+import { useSupporterDashboard } from '@/hooks/api/useSupporterDashboard';
+import { useUserData } from '@/providers/UserProvider';
 
 export default function SupporterDashboard() {
+  const { name } = useUserData();
+  const { data, isLoading } = useSupporterDashboard();
+
   return (
     <>
       <PageHeader
-        heading="Alex Johnson's Dashboard"
+        heading={isLoading ? 'Dashboard' : `${name}'s Dashboard`}
         columns="auto 1fr auto"
-        // actions={<DatePickerWithRange />}
       />
 
       <Box maxWidth="1400px" m="auto" px="4">
@@ -32,7 +35,11 @@ export default function SupporterDashboard() {
               <Clipboard className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">7</div>
+              <div className="text-2xl font-bold">
+                <Skeleton loading={isLoading}>
+                  {data?.requestsInProgress || 0}
+                </Skeleton>
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -43,7 +50,11 @@ export default function SupporterDashboard() {
               <Check className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">11</div>
+              <div className="text-2xl font-bold">
+                <Skeleton loading={isLoading}>
+                  {data?.fulfilledRequests || 0}
+                </Skeleton>
+              </div>
             </CardContent>
           </Card>
 
@@ -55,7 +66,11 @@ export default function SupporterDashboard() {
               <MessageCircle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">5</div>
+              <div className="text-2xl font-bold">
+                <Skeleton loading={isLoading}>
+                  {data?.unreadMessages || 0}
+                </Skeleton>
+              </div>
             </CardContent>
           </Card>
         </Grid>
@@ -70,7 +85,10 @@ export default function SupporterDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <SupporterRequestsInProgress />
+                <SupporterRequestsInProgress
+                  data={data?.recentRequests || []}
+                  isLoading={isLoading}
+                />
               </CardContent>
             </Card>
           </Box>
@@ -84,7 +102,10 @@ export default function SupporterDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <SupporterRequestsSuggested />
+                <SupporterRequestsSuggested
+                  data={data?.suggestedRequests || []}
+                  isLoading={isLoading}
+                />
               </CardContent>
             </Card>
           </Box>

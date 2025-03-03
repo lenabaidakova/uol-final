@@ -1,60 +1,81 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Link, Skeleton } from '@radix-ui/themes';
+import { format } from 'date-fns';
+import { appRoutes } from '@/lib/appRoutes';
+import * as React from 'react';
 
-const items = [
-  {
-    id: 'ip1',
-    request: 'Blankets for winter',
-    shelter: 'Happy Paws Shelter',
-    initials: 'HP',
-    date: 'Due on Dec 4',
-  },
-  {
-    id: 'ip2',
-    request: 'Emergency vet care for injured puppy',
-    shelter: 'Kind Hearts Shelter',
-    initials: 'KH',
-    date: 'Due on Dec 3',
-  },
-  {
-    id: 'ip3',
-    request: 'Food supplies for stray cats',
-    shelter: 'Paws & Claws Shelter',
-    initials: 'PC',
-    date: 'Due on Dec 2',
-  },
-  {
-    id: 'ip4',
-    request: 'Toys and treats for shelter dogs',
-    shelter: 'Safe Haven Shelter',
-    initials: 'SH',
-    date: 'Due on Dec 1',
-  },
-];
+type RecentRequest = {
+  id: string;
+  title: string;
+  creator: { name: string };
+  dueDate: string | null;
+};
 
-export function SupporterRequestsInProgress() {
+type Props = {
+  data: RecentRequest[];
+  isLoading: boolean;
+};
+
+export function SupporterRequestsInProgress({ data, isLoading }: Props) {
+  if (isLoading) {
+    return (
+      <div className="space-y-8">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div className="flex items-center" key={i}>
+            <Skeleton className="h-9 w-9 rounded-full" />
+            <div className="ml-4 space-y-1">
+              <Skeleton className="h-4 w-48" />
+              <Skeleton className="h-3 w-32" />
+            </div>
+            <Skeleton className="ml-auto h-3 w-20" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
-      {items.map((item, i) => (
-        <div className="flex items-center" key={i}>
-          <Avatar className="h-9 w-9">
-            <AvatarImage
-              src={`https://robohash.org/${item.id}.png?set=set4&size=150x150`}
-              alt="Avatar"
-            />
-            <AvatarFallback>JS</AvatarFallback>
-          </Avatar>
-          <div className="ml-4 space-y-1">
-            <a
-              href="#"
-              className="text-sm font-medium leading-none hover:underline"
-            >
-              {item.request}
-            </a>
-            <p className="text-sm text-muted-foreground">{item.shelter}</p>
-          </div>
-          <div className="ml-auto text-sm">{item.date}</div>
-        </div>
-      ))}
+      {data.length > 0 ? (
+        data.map((item) => {
+          const initials =
+            item.creator.name
+              .split(' ')
+              .map((n) => n[0])
+              .join('')
+              .toUpperCase() || 'SH';
+
+          const formattedDate = item.dueDate
+            ? `Due on ${format(new Date(item.dueDate), 'MMM d')}`
+            : 'No due date';
+
+          return (
+            <div className="flex items-center" key={item.id}>
+              <Avatar className="h-9 w-9">
+                <AvatarImage
+                  src={`https://robohash.org/${item.id}.png?set=set4&size=150x150`}
+                  alt="Avatar"
+                />
+                <AvatarFallback>{initials}</AvatarFallback>
+              </Avatar>
+              <div className="ml-4 space-y-1">
+                <Link color="gray" href={appRoutes.request(item.id)}>
+                  {item.title}
+                </Link>
+
+                <p className="text-sm text-muted-foreground">
+                  {item.creator.name}
+                </p>
+              </div>
+              <div className="ml-auto text-sm">{formattedDate}</div>
+            </div>
+          );
+        })
+      ) : (
+        <p className="text-sm text-muted-foreground">
+          No ongoing requests at the moment
+        </p>
+      )}
     </div>
   );
 }

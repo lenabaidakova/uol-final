@@ -23,8 +23,9 @@ import {
 } from '@/components/ui/sidebar';
 import * as React from 'react';
 import RouterLink from 'next/link';
-import { useRole } from '@/providers/RoleProvider';
+import { useUserData } from '@/providers/UserProvider';
 import { SidebarUser } from '@/app/ui/SidebarUser';
+import {ROLES} from "@/constants/Role";
 
 const shelterItems = [
   {
@@ -63,9 +64,9 @@ const supporterItems = [
 ];
 
 export default function AppSidebar() {
-  const { role, setRole } = useRole();
+  const { role, setRole } = useUserData();
 
-  const isShelter = role === 'shelter';
+  const isShelter = role === ROLES.SHELTER;
   const items = isShelter ? shelterItems : supporterItems;
 
   return (

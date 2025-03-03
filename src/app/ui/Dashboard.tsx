@@ -1,13 +1,14 @@
 'use client';
 
-import { useRole } from '@/providers/RoleProvider';
+import { useUserData } from '@/providers/UserProvider';
 import ShelterDashboard from '@/app/ui/ShelterDashboard';
 import SupporterDashboard from '@/app/ui/SupporterDashboard';
+import { ROLES } from '@/constants/Role';
 
 export default function Dashboard() {
-  const { role } = useRole();
+  const { role } = useUserData();
 
-  if (role === 'shelter') {
+  if (role === ROLES.SHELTER) {
     return <ShelterDashboard />;
   }
   return <SupporterDashboard />;
