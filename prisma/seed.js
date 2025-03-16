@@ -1,6 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const bcrypt = require('bcrypt');
+const { faker } = require('@faker-js/faker');
 
 async function main() {
   console.log('Seeding database...');
@@ -52,164 +53,105 @@ async function main() {
 
   const hashedPassword = await bcrypt.hash('password123', 10);
 
-  const shelter1 = await prisma.user.create({
-    data: {
-      email: 'shelter1@example.com',
-      name: 'Shelter A',
-      password: hashedPassword,
-      roleId: await getRoleId('SHELTER'),
-      verified: true,
-    },
-  });
+  // creating shelters
+  const shelters = await Promise.all(
+    Array.from({ length: 5 }, async (_, index) =>
+      prisma.user.create({
+        data: {
+          email: faker.internet.email().toLowerCase(),
+          name: faker.company.name(),
+          password: hashedPassword,
+          roleId: await getRoleId('SHELTER'),
+          verified: true,
+        },
+      })
+    )
+  );
 
-  const shelter2 = await prisma.user.create({
-    data: {
-      email: 'shelter2@example.com',
-      name: 'Shelter B',
-      password: hashedPassword,
-      roleId: await getRoleId('SHELTER'),
-      verified: true,
-    },
-  });
+  // creating supporters
+  const supporters = await Promise.all(
+    Array.from({ length: 5 }, async (_, index) =>
+      prisma.user.create({
+        data: {
+          email: faker.internet.email().toLowerCase(),
+          name: faker.person.fullName(),
+          password: hashedPassword,
+          roleId: await getRoleId('SUPPORTER'),
+          verified: true,
+        },
+      })
+    )
+  );
 
-  const supporter1 = await prisma.user.create({
-    data: {
-      email: 'supporter1@example.com',
-      name: 'Supporter One',
-      password: hashedPassword,
-      roleId: await getRoleId('SUPPORTER'),
-      verified: true,
-    },
-  });
+  // creating requests
+  const requestData = await Promise.all(
+    Array.from({ length: 50 }, async (_, index) => {
+      const type = ['SUPPLIES', 'SERVICES', 'VOLUNTEERS'][index % 3];
+      const urgency = ['HIGH', 'MEDIUM', 'LOW'][index % 3];
+      const status = ['PENDING', 'IN_PROGRESS', 'COMPLETED', 'ARCHIVED'][
+        index % 4
+      ];
+      const locations = [
+        'London',
+        'Manchester',
+        'Birmingham',
+        'Liverpool',
+        'Leeds',
+      ];
 
-  const supporter2 = await prisma.user.create({
-    data: {
-      email: 'supporter2@example.com',
-      name: 'Supporter Two',
-      password: hashedPassword,
-      roleId: await getRoleId('SUPPORTER'),
-      verified: true,
-    },
-  });
+      return prisma.request.create({
+        data: {
+          title: `${type} Request #${index + 1}`,
+          typeId: await getTypeId(type),
+          urgencyId: await getUrgencyId(urgency),
+          statusId: await getStatusId(status),
+          dueDate: index % 5 === 0 ? new Date('2025-04-01') : null,
+          details: faker.lorem.sentence(),
+          location: locations[index % locations.length],
+          creatorId: shelters[index % shelters.length].id,
+          assignedToId:
+            status === 'IN_PROGRESS' || status === 'COMPLETED'
+              ? supporters[index % supporters.length].id
+              : null,
+        },
+      });
+    })
+  );
 
-  const sampleRequests = [
-    {
-      title: 'Need blankets for winter',
-      type: 'SUPPLIES',
-      urgency: 'HIGH',
-      dueDate: new Date('2025-02-01'),
-      details: 'We need 100 blankets to help homeless animals during winter',
-      location: 'London',
-      status: 'PENDING',
-      creatorId: shelter1.id,
-      assignedToId: supporter1.id,
-    },
-    {
-      title: 'Looking for volunteers for cleanup',
-      type: 'VOLUNTEERS',
-      urgency: 'MEDIUM',
-      dueDate: new Date('2025-03-01'),
-      details: 'We need 10 volunteers for a shelter cleanup drive',
-      location: 'Manchester',
-      status: 'IN_PROGRESS',
-      creatorId: shelter2.id,
-      assignedToId: supporter2.id,
-    },
-    {
-      title: 'Need medical supplies',
-      type: 'SUPPLIES',
-      urgency: 'LOW',
-      details: 'Any donations of medical supplies would be appreciated',
-      location: 'London',
-      status: 'PENDING',
-      creatorId: shelter1.id,
-      assignedToId: null,
-    },
-    {
-      title: 'Seeking transport volunteers',
-      type: 'VOLUNTEERS',
-      urgency: 'MEDIUM',
-      details:
-        'Volunteers needed to help transport animals to adoption centers.',
-      location: 'London',
-      status: 'ARCHIVED',
-      creatorId: shelter1.id,
-      assignedToId: null,
-    },
-    ...Array.from({ length: 15 }, (_, index) => {
-      const assignedTo =
-        index % 3 === 0
-          ? supporter1.id
-          : index % 3 === 1
-            ? supporter2.id
-            : null;
-      const status = assignedTo || index % 4 === 3 ? 'IN_PROGRESS' : 'PENDING';
-
-      return {
-        title: `General request #${index + 6}`,
-        type: index % 2 === 0 ? 'SUPPLIES' : 'SERVICES',
-        urgency: index % 3 === 0 ? 'HIGH' : index % 3 === 1 ? 'MEDIUM' : 'LOW',
-        dueDate: index % 5 === 0 ? new Date('2025-04-01') : null,
-        details: `Details for request #${index + 6}.`,
-        location: index % 2 === 0 ? 'London' : 'Manchester',
-        status,
-        creatorId: index % 2 === 0 ? shelter1.id : shelter2.id,
-        assignedToId: status === 'IN_PROGRESS' ? assignedTo : null,
-      };
-    }),
+  // creating messages for requests
+  const messages = [];
+  const messageTemplates = [
+    'I can help with this request! How can I contribute?',
+    'Do you still need assistance with this?',
+    'I have some supplies available. Where should I send them?',
+    "I'm interested in volunteering. What are the next steps?",
+    'How urgent is this? I might be able to assist soon.',
+    'Can I get more details about this request?',
+    'Thank you for offering to help! Here’s what we need…',
+    'That would be amazing! When can you drop off the supplies?',
+    "We're still looking for volunteers, please let us know!",
+    'Much appreciated! This will help a lot!',
   ];
 
-  const createdRequests = [];
-  for (const request of sampleRequests) {
-    const createdRequest = await prisma.request.create({
+  for (let i = 0; i < 100; i++) {
+    const request = requestData[i % requestData.length];
+    const sender =
+      i % 2 === 0
+        ? supporters[i % supporters.length]
+        : shelters[i % shelters.length];
+    const messageText = messageTemplates[i % messageTemplates.length];
+
+    const createdMessage = await prisma.message.create({
       data: {
-        title: request.title,
-        typeId: await getTypeId(request.type),
-        urgencyId: await getUrgencyId(request.urgency),
-        statusId: await getStatusId(request.status),
-        dueDate: request.dueDate,
-        details: request.details,
-        location: request.location,
-        creatorId: request.creatorId,
-        assignedToId: request.assignedToId,
+        requestId: request.id,
+        senderId: sender.id,
+        text: messageText,
       },
     });
-    createdRequests.push(createdRequest);
-  }
 
-  const sampleMessages = [
-    {
-      requestId: createdRequests[0].id,
-      senderId: supporter1.id,
-      text: 'I can donate 10 blankets!',
-    },
-    {
-      requestId: createdRequests[1].id,
-      senderId: supporter2.id,
-      text: 'I would love to volunteer for the cleanup.',
-    },
-    {
-      requestId: createdRequests[0].id,
-      senderId: shelter1.id,
-      text: 'That would be amazing! Thank you!',
-    },
-    {
-      requestId: createdRequests[1].id,
-      senderId: shelter2.id,
-      text: 'We really appreciate your help!',
-    },
-  ];
-
-  for (const message of sampleMessages) {
-    const createdMessage = await prisma.message.create({ data: message });
-
-    const request = await prisma.request.findUnique({
-      where: { id: message.requestId },
-      select: { creatorId: true, assignedToId: true },
-    });
-
+    // fetch recipients
     const recipients = [request.creatorId, request.assignedToId].filter(
-      (id) => id && id !== message.senderId
+      (id) => id && id !== sender.id
     );
 
     // insert unread messages
@@ -224,7 +166,7 @@ async function main() {
             data: {
               userId: recipientId,
               messageId: createdMessage.id,
-              requestId: message.requestId,
+              requestId: request.id,
             },
           });
         }

@@ -22,8 +22,8 @@ export type SupporterDashboardResponse = {
 };
 
 const fetchSupporterDashboard = (): Promise<SupporterDashboardResponse> => {
-    return apiClient.get('/dashboard/supporter');
-  };
+  return apiClient.get('/dashboard/supporter');
+};
 
 export function useSupporterDashboard(
   options?: UseQueryOptions<SupporterDashboardResponse>

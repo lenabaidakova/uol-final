@@ -11,5 +11,9 @@ export default function Dashboard() {
   if (role === ROLES.SHELTER) {
     return <ShelterDashboard />;
   }
-  return <SupporterDashboard />;
+
+  if (role === ROLES.SUPPORTER) {
+    return <SupporterDashboard />;
+  }
+  return null;
 }

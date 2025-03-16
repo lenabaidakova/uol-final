@@ -47,7 +47,7 @@
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
     "lucide-react": "^0.464.0",
-    "next": "14.2.15",
+    "next": "^14.2.24",
     "next-auth": "^4.24.11",
     "next-themes": "^0.4.3",
     "nodemailer": "^6.9.16",
@@ -68,6 +68,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.6.0",
     "@playwright/test": "^1.49.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.1.0",

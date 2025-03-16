@@ -31,8 +31,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (session?.user) {
-      if (session.user.role && session.user.role.toLowerCase() !== role) {
-        setRole(session.user.role.toLowerCase() as RoleType);
+      if (session.user.role && session.user.role !== role) {
+        setRole(session.user.role as RoleType);
       }
       if (session.user.name && session.user.name !== name) {
         setName(session.user.name);
