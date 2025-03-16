@@ -1,6 +1,6 @@
 import MainLayout from '@/app/ui/MainLayout';
 import PageHeader from '@/app/ui/PageHeader';
-import { Box, Link } from '@radix-ui/themes';
+import { Box } from '@radix-ui/themes';
 import UnreadMessagesTable from '@/app/ui/UnreadMessagesTable';
 
 export default function Unread() {

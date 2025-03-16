@@ -22,7 +22,7 @@ import {
   UnreadMessagesQuery,
   useUnreadMessages,
 } from '@/hooks/api/useUnreadMessages';
-import { appRoutes } from '@/lib/appRoutes';
+import UnreadLink from '@/app/ui/UnreadMessagesTable/UnreadLink';
 
 export type Message = {
   requestId: string;
@@ -38,12 +38,9 @@ export const columns: ColumnDef<Message>[] = [
     header: 'Title',
     cell: ({ row }) => {
       const requestId = row.original.requestId;
+      const title: string = row.getValue('title');
 
-      return (
-        <Link color="gray" href={appRoutes.request(requestId)}>
-          {row.getValue('title')}
-        </Link>
-      );
+      return <UnreadLink title={title} requestId={requestId} />;
     },
   },
   {
