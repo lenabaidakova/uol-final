@@ -60,8 +60,8 @@ export async function POST(request: Request) {
     });
 
     const transporter = nodemailer.createTransport({
-      host: 'localhost',
-      port: 1025,
+      host: process.env.SMTP_HOST || 'localhost', // SMTP_HOST for docker container
+      port: Number(process.env.SMTP_PORT) || 1025, // SMTP_PORT for docker container
       secure: false,
     });
 

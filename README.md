@@ -2,7 +2,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-Node v20.9.0
+Node v20.17.0
 
 First, run the development server:
 
@@ -69,3 +69,19 @@ Recreate all and seed
 npx prisma migrate reset
 ```
 
+
+```shell
+docker compose up --build
+```
+next.js http://localhost:3000
+mailhog http://localhost:8025
+
+Stop 
+```shell
+docker compose down
+```
+
+Rebuild and restart
+```shell
+docker compose up --build --force-recreate
+```
