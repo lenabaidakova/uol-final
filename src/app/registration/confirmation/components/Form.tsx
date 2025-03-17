@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useVerifyEmail } from '@/hooks/api/useVerifyEmail';
-import { Box, Card } from '@radix-ui/themes';
+import { Box, Card, Skeleton } from '@radix-ui/themes';
 import { Callout } from '@/app/ui/Callout';
 import { ErrorApi } from '@/app/ui/ErrorApi';
 
-export default function ConfirmEmailPage() {
+function ConfirmEmailPageBody() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams?.get('token');
@@ -22,7 +22,7 @@ export default function ConfirmEmailPage() {
     if (token && !isMutating) {
       mutate({ token });
     }
-  }, [token, mutate]);
+  }, [token, mutate, isMutating]);
 
   if (!token) {
     return (
@@ -58,4 +58,20 @@ export default function ConfirmEmailPage() {
   }
 
   return null;
+}
+
+export default function ConfirmEmailPage() {
+  return (
+    <Suspense
+      fallback={
+        <Box m="auto" maxWidth="460px" py="3" px="2" mt="4">
+          <Card size="4" variant="classic">
+            <Skeleton width="300px" height="30px" />
+          </Card>
+        </Box>
+      }
+    >
+      <ConfirmEmailPageBody />
+    </Suspense>
+  );
 }

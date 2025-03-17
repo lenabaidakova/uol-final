@@ -35,7 +35,7 @@ export default function RequestsTableShelter() {
 
   const table = useReactTable({
     data: requests,
-    // @ts-expect-error: couldn't fix this ts error (just 1 per project, so leave it as is)
+    // @ts-expect-error: couldn't fix this ts error
     columns,
     getCoreRowModel: getCoreRowModel(),
   });

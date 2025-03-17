@@ -48,7 +48,7 @@ const items = [
 
 export default function AppSidebar() {
   const { data } = useMessagesUnreadExist();
-  const { role, setRole } = useUserData();
+  const { role } = useUserData();
 
   const isShelter = role === ROLES.SHELTER;
 

@@ -29,11 +29,7 @@ export default function LocationsCombobox({
   value,
   onChange,
 }: LocationsComboboxProps) {
-  const {
-    data,
-    error: locationsError,
-    isLoading: isLocationsLoading,
-  } = useLocationsList();
+  const { data } = useLocationsList();
   const [open, setOpen] = React.useState(false);
 
   const items =

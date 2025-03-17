@@ -1,6 +1,6 @@
-// @ts-nocheck
 import { describe, it, expect, vi } from 'vitest';
 import { GET } from './route';
+
 import prisma from '@/lib/prisma';
 
 vi.mock('@/lib/prisma', () => {

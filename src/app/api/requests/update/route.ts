@@ -54,6 +54,7 @@ export async function PATCH(request: Request) {
       'location',
       'status',
     ];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dataToUpdate: Record<string, any> = {};
     for (const field of editableFields) {
       if (updateData[field] !== undefined) {
@@ -117,6 +118,7 @@ export async function PATCH(request: Request) {
       { message: 'Request updated successfully', request: updatedRequest },
       { status: 200 }
     );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error('Error updating request:', error);
 

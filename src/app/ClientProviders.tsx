@@ -7,7 +7,6 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
-import { ThemeProvider } from 'next-themes';
 import { Theme } from '@radix-ui/themes';
 import { UserProvider } from '@/providers/UserProvider';
 import { SessionProvider } from 'next-auth/react';

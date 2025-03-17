@@ -1,4 +1,4 @@
-import { Check, Trash } from 'lucide-react';
+import { Trash } from 'lucide-react';
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import * as React from 'react';
 import { AlertDialog } from '@/app/ui/AlertDialog';

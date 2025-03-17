@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Flex, Link, Skeleton } from '@radix-ui/themes';
+import { Flex, Skeleton } from '@radix-ui/themes';
 import { ErrorApi } from '@/app/ui/ErrorApi';
 import {
   UnreadMessage,

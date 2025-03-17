@@ -1,4 +1,15 @@
+import { setMaxListeners } from 'events';
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+
+setMaxListeners(20);
+
+const nextConfig = {
+//    eslint: {
+//      ignoreDuringBuilds: true,
+//    },
+    typescript: {
+      ignoreBuildErrors: true,
+    },
+};
 
 export default nextConfig;

@@ -65,6 +65,7 @@ export async function PATCH(request: Request) {
       { message: 'Request archived successfully', request: updatedRequest },
       { status: 200 }
     );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error('Error archiving request:', error);
 

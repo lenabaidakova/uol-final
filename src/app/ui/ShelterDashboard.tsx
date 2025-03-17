@@ -78,7 +78,7 @@ export default function ShelterDashboard() {
               <CardHeader>
                 <CardTitle>Recently taken in progress</CardTitle>
                 <CardDescription>
-                  Track the latest progress on your shelter's needs
+                  Track the latest progress on&nbsp;your shelter&rsquo;s needs
                 </CardDescription>
               </CardHeader>
               <CardContent>

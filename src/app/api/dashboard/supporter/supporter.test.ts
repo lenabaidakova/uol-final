@@ -1,6 +1,6 @@
-// @ts-nocheck
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GET as getSupporterDashboard } from './route';
+
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 

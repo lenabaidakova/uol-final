@@ -1,5 +1,6 @@
 import { http, HttpResponse } from 'msw';
 import { User } from 'next-auth';
+import { EmptyObject } from '@/types/Common';
 
 type RegisterRequestBody = Pick<User, 'email' | 'role'> & { password: string };
 
@@ -8,11 +9,9 @@ type RegisterResponseBody = {
   user?: Pick<User, 'id' | 'email' | 'role'>;
 };
 
-type EmptyParams = {};
-
 export const handlers = [
   http.post<
-    EmptyParams,
+    EmptyObject,
     RegisterRequestBody,
     RegisterResponseBody,
     '/api/register'
@@ -39,8 +38,6 @@ export const handlers = [
         { status: 400 }
       );
     }
-
-    const confirmationToken = 'mock-confirmation-token';
 
     return HttpResponse.json(
       {

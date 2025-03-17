@@ -26,7 +26,7 @@ export function ChatCard({ requestId }: ChatCardProps) {
   const currentUserId = session?.user?.id;
   const { data } = useMessageGetByRequestId({ id: requestId });
 
-  const [isConnected, setIsConnected] = useState(false);
+  const [, setIsConnected] = useState(false);
   const [messages, setMessages] = useState<
     { senderId: string; text: string }[]
   >([]);
@@ -37,7 +37,7 @@ export function ChatCard({ requestId }: ChatCardProps) {
     if (data?.messages && !messages.length) {
       setMessages(data.messages);
     }
-  }, [data]);
+  }, [data, messages.length]);
 
   useEffect(() => {
     if (socket.connected) {

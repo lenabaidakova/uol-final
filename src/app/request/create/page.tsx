@@ -1,5 +1,5 @@
 import PageHeader from '@/app/ui/PageHeader';
-import { Box, Heading } from '@radix-ui/themes';
+import { Box } from '@radix-ui/themes';
 import MainLayout from '@/app/ui/MainLayout';
 import { NewRequestForm } from '@/app/request/create/ui/NewRequestForm';
 
