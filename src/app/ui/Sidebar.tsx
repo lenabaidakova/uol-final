@@ -2,11 +2,10 @@
 
 import {
   Home,
-  User,
-  ChartColumnIncreasing,
   Handshake,
-  MessageCircle,
   ListChecks,
+  MessageSquare,
+  MessageSquareDot,
 } from 'lucide-react';
 import { Text } from '@radix-ui/themes';
 import {
@@ -16,7 +15,6 @@ import {
   SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
@@ -26,8 +24,11 @@ import RouterLink from 'next/link';
 import { useUserData } from '@/providers/UserProvider';
 import { SidebarUser } from '@/app/ui/SidebarUser';
 import { ROLES } from '@/constants/Role';
+import { appRoutes } from '@/lib/appRoutes';
+import { useMessagesUnreadExist } from '@/hooks/api/useMessagesUnreadExist';
+import './Sidebar.css';
 
-const shelterItems = [
+const items = [
   {
     title: 'Home',
     url: '/',
@@ -35,39 +36,21 @@ const shelterItems = [
   },
   {
     title: 'Requests',
-    url: '/shelter/requests',
+    url: appRoutes.requests(),
     icon: ListChecks,
   },
   {
     title: 'Unread messages',
-    url: '/unread',
-    icon: MessageCircle,
-  },
-];
-
-const supporterItems = [
-  {
-    title: 'Home',
-    url: '/',
-    icon: Home,
-  },
-  {
-    title: 'Requests',
-    url: '/supporter/requests',
-    icon: ListChecks,
-  },
-  {
-    title: 'Unread messages',
-    url: '/unread',
-    icon: MessageCircle,
+    url: appRoutes.unread(),
+    icon: MessageSquare,
   },
 ];
 
 export default function AppSidebar() {
+  const { data } = useMessagesUnreadExist();
   const { role, setRole } = useUserData();
 
   const isShelter = role === ROLES.SHELTER;
-  const items = isShelter ? shelterItems : supporterItems;
 
   return (
     <Sidebar collapsible="icon">
@@ -101,14 +84,15 @@ export default function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <a href={item.url}>
-                      <item.icon />
+                      {item.title === 'Unread messages' && data?.hasUnread ? (
+                        <MessageSquareDot className="sidebar__unread-messages" />
+                      ) : (
+                        <item.icon />
+                      )}
+
                       <span>{item.title}</span>
                     </a>
                   </SidebarMenuButton>
-
-                  {item.title === 'Unread messages' && (
-                    <SidebarMenuBadge>5</SidebarMenuBadge>
-                  )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>

@@ -1,0 +1,4 @@
+.sidebar__unread-messages circle {
+  fill: var(--ruby-10);
+  stroke: var(--ruby-10);
+}

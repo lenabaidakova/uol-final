@@ -73,6 +73,18 @@ export const contract = c.router({
     },
     summary: 'Mark all unread messages in request as read',
   },
+  unreadExists: {
+    method: 'GET',
+    path: '/api/messages/unread-exists',
+    responses: {
+      200: z.object({
+        hasUnread: z.boolean(),
+      }),
+      401: z.object({ message: z.string() }),
+      500: z.object({ message: z.string() }),
+    },
+    summary: 'Check if user has unread messages',
+  },
   registerUser: {
     method: 'POST',
     path: '/api/auth/register',
