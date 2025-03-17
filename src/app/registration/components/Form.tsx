@@ -27,7 +27,7 @@ const ROLE_OPTIONS = [
 const registrationSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
-  name: z.string().min(5, 'Password must be at least 5 characters'),
+  name: z.string().min(5, 'Name must be at least 5 characters'),
   role: z.enum([ROLES.SUPPORTER, ROLES.SHELTER], {
     message: 'Role is required',
   }),
@@ -84,7 +84,7 @@ export default function RegisterPage() {
             <Input
               label="Name"
               placeholder="Enter your name"
-              errorMessage={errors.email?.message}
+              errorMessage={errors.name?.message}
               required
               {...register('name')}
               data-testid="name-input"

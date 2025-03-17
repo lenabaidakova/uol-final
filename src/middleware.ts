@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request });
 
   // public routes
-  const publicPaths = ['/login', '/register', '/public/:path*', '/docs'];
+  const publicPaths = ['/login', '/registration', '/public/:path*', '/docs'];
 
   // https://github.com/nextauthjs/next-auth/issues/8578
   if (

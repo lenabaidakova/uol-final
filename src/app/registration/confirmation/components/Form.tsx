@@ -6,23 +6,32 @@ import { useVerifyEmail } from '@/hooks/api/useVerifyEmail';
 import { Box, Card, Skeleton } from '@radix-ui/themes';
 import { Callout } from '@/app/ui/Callout';
 import { ErrorApi } from '@/app/ui/ErrorApi';
+import { useToast } from '@/hooks/use-toast';
 
 function ConfirmEmailPageBody() {
+  const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams?.get('token');
+  const hasRequested = React.useRef(false);
 
   const { mutate, isMutating, error } = useVerifyEmail({
     onSuccess: () => {
+      toast({
+        title: 'Email verified',
+        description:
+          'Your email has been successfully confirmed. You can now log in.',
+      });
       router.push('/login');
     },
   });
 
   useEffect(() => {
-    if (token && !isMutating) {
+    if (token && !hasRequested.current) {
+      hasRequested.current = true;
       mutate({ token });
     }
-  }, [token, mutate, isMutating]);
+  }, [token, hasRequested, mutate]);
 
   if (!token) {
     return (
