@@ -1,9 +1,18 @@
-import NextAuth from 'next-auth';
+import NextAuth, { AuthOptions, Session } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcrypt';
+import { Prisma } from '@prisma/client';
+import { JWT } from 'next-auth/jwt';
 
-export const authOptions = {
+// prisma doesn't generate relations types by default, need to use Prisma utils
+// https://github.com/prisma/prisma/discussions/10928
+// https://www.prisma.io/docs/orm/prisma-client/type-safety/operating-against-partial-structures-of-model-types
+type UserWithRole = Prisma.UserGetPayload<{
+  include: { role: true };
+}>;
+
+export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -58,10 +67,10 @@ export const authOptions = {
         token.role = user.role;
       }
 
-      const updatedUser = await prisma.user.findUnique({
-        where: { id: token.id },
+      const updatedUser = (await prisma.user.findUnique({
+        where: { id: token.id as string },
         include: { role: true },
-      });
+      })) as UserWithRole | null;
 
       if (updatedUser && updatedUser.role) {
         if (token.role !== updatedUser.role.name) {
@@ -71,12 +80,12 @@ export const authOptions = {
 
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: { session: Session; token: JWT }) {
       if (token) {
-        session.user.id = token.id;
-        session.user.name = token.name;
-        session.user.email = token.email;
-        session.user.role = token.role;
+        session.user.id = String(token.id ?? '');
+        session.user.name = token.name ?? '';
+        session.user.email = token.email ?? '';
+        session.user.role = String(token.role ?? 'SUPPORTER');
       }
       return session;
     },
