@@ -42,8 +42,12 @@ describe('/api/messages/unread-exists', () => {
       user: { id: 'user-id-123' },
     });
 
-    prisma.unreadMessage.findFirst.mockResolvedValueOnce({
+    vi.mocked(prisma.unreadMessage.findFirst).mockResolvedValueOnce({
       id: 'unread-msg-1',
+      userId: 'user-id-123',
+      messageId: 'message-id-123',
+      requestId: 'request-id-123',
+      createdAt: new Date(),
     });
 
     const response = await GET(
@@ -60,7 +64,7 @@ describe('/api/messages/unread-exists', () => {
       user: { id: 'user-id-123' },
     });
 
-    prisma.unreadMessage.findFirst.mockResolvedValueOnce(null);
+    vi.mocked(prisma.unreadMessage.findFirst).mockResolvedValueOnce(null);
 
     const response = await GET(
       new Request('http://localhost:3000/api/messages/unread-exists')

@@ -9,6 +9,7 @@
     "dev-test": "next dev -p 4000",
     "lint": "next lint",
     "format": "prettier --write .",
+    "ts-check": "tsc --noEmit",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:e2e": "playwright test",

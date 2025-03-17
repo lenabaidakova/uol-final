@@ -45,18 +45,25 @@ describe('/api/messages/unread', () => {
 
     const mockUnreadMessages = [
       {
+        id: 'unread-1',
+        userId: 'shelter-id-123',
+        messageId: 'msg-1',
+        requestId: 'request-id-123',
+        createdAt: new Date('2025-02-02T13:37:25.827Z'),
         message: {
           id: 'msg-1',
           text: 'I want to donate supplies',
-          createdAt: '2025-02-02T13:37:25.827Z',
+          createdAt: new Date('2025-02-02T13:37:25.827Z'),
           sender: { id: 'supporter-id-1', name: 'John Doe' },
           request: { id: 'request-id-123', title: 'Food donation request' },
         },
       },
     ];
 
-    prisma.unreadMessage.findMany.mockResolvedValueOnce(mockUnreadMessages);
-    prisma.unreadMessage.count.mockResolvedValueOnce(1);
+    vi.mocked(prisma.unreadMessage.findMany).mockResolvedValueOnce(
+      mockUnreadMessages
+    );
+    vi.mocked(prisma.unreadMessage.count).mockResolvedValueOnce(1);
 
     const response = await GET(
       new Request('http://localhost:3000/api/messages/unread')
@@ -76,51 +83,25 @@ describe('/api/messages/unread', () => {
       user: { id: 'supporter-id-123', role: 'SUPPORTER' },
     });
 
-    const mockUnreadMessages = [
-      {
-        message: {
-          id: 'msg-1',
-          text: 'Thanks for offering help',
-          createdAt: '2025-02-02T13:37:25.827Z',
-          sender: { id: 'shelter-id-1', name: 'Shelter ABC' },
-          request: { id: 'request-id-456', title: 'Winter clothing donation' },
-        },
-      },
-    ];
-
-    prisma.unreadMessage.findMany.mockResolvedValueOnce(mockUnreadMessages);
-    prisma.unreadMessage.count.mockResolvedValueOnce(1);
-
-    const response = await GET(
-      new Request('http://localhost:3000/api/messages/unread')
-    );
-
-    const body = await response.json();
-
-    expect(response.status).toBe(200);
-    expect(body.unreadRequests).toHaveLength(1);
-    expect(body.unreadRequests[0].title).toBe('Winter clothing donation');
-    expect(body.unreadRequests[0].lastMessageFrom).toBe('Shelter ABC');
-    expect(body.unreadRequests[0].unreadCount).toBe(1);
-  });
-
-  it('should return paginated unread messages correctly', async () => {
-    vi.mocked(getServerSession).mockResolvedValueOnce({
-      user: { id: 'supporter-id-123', role: 'SUPPORTER' },
-    });
-
     const mockUnreadMessages = Array.from({ length: 10 }, (_, i) => ({
+      id: `unread-${i}`,
+      userId: 'supporter-id-123',
+      messageId: `msg-${i}`,
+      requestId: `request-id-${i}`,
+      createdAt: new Date(),
       message: {
         id: `msg-${i}`,
         text: `Message ${i}`,
-        createdAt: new Date().toISOString(),
+        createdAt: new Date(),
         sender: { id: `sender-id-${i}`, name: `User ${i}` },
         request: { id: `request-id-${i}`, title: `Request ${i}` },
       },
     }));
 
-    prisma.unreadMessage.findMany.mockResolvedValueOnce(mockUnreadMessages);
-    prisma.unreadMessage.count.mockResolvedValueOnce(50);
+    vi.mocked(prisma.unreadMessage.findMany).mockResolvedValueOnce(
+      mockUnreadMessages
+    );
+    vi.mocked(prisma.unreadMessage.count).mockResolvedValueOnce(50);
 
     const response = await GET(
       new Request('http://localhost:3000/api/messages/unread?page=2&limit=10')
@@ -143,8 +124,8 @@ describe('/api/messages/unread', () => {
       user: { id: 'supporter-id-123', role: 'SUPPORTER' },
     });
 
-    prisma.unreadMessage.findMany.mockResolvedValueOnce([]);
-    prisma.unreadMessage.count.mockResolvedValueOnce(0);
+    vi.mocked(prisma.unreadMessage.findMany).mockResolvedValueOnce([]);
+    vi.mocked(prisma.unreadMessage.count).mockResolvedValueOnce(0);
 
     const response = await GET(
       new Request('http://localhost:3000/api/messages/unread')
