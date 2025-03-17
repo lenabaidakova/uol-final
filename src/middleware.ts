@@ -1,18 +1,12 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
 // protect all routes
-export async function middleware(request: Request) {
+export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request });
 
   // public routes
-  const publicPaths = [
-    '/login',
-    '/register',
-    '/about',
-    '/public/:path*',
-    '/docs',
-  ];
+  const publicPaths = ['/login', '/register', '/public/:path*', '/docs'];
 
   // https://github.com/nextauthjs/next-auth/issues/8578
   if (

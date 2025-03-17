@@ -34,8 +34,7 @@ export default function LoginPage() {
     },
   });
 
-  const onSubmit = (data: LoginFormData, e) => {
-    e.preventDefault();
+  const onSubmit = (data: LoginFormData) => {
     mutate(data);
   };
 

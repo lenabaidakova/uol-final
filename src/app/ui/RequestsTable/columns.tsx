@@ -36,7 +36,11 @@ export const columns: ColumnDef<Request>[] = [
   {
     accessorKey: 'type',
     header: 'Type',
-    cell: ({ row }) => <div>{row.getValue('type').toLowerCase()}</div>,
+    cell: ({ row }) => {
+      const type = row.getValue<RequestType>('type');
+
+      return <div>{type.toLowerCase()}</div>;
+    },
   },
   {
     accessorKey: 'location',
@@ -62,7 +66,7 @@ export const columns: ColumnDef<Request>[] = [
     accessorKey: 'dueDate',
     header: 'Due date',
     cell: ({ row }) => {
-      const value = row.getValue('dueDate');
+      const value: string = row.getValue('dueDate');
       const formattedDate = value
         ? format(parseISO(value), 'MMMM d, yyyy')
         : '-';
@@ -73,7 +77,7 @@ export const columns: ColumnDef<Request>[] = [
     accessorKey: 'status',
     header: 'Status',
     cell: ({ row }) => {
-      const status = row.getValue('status');
+      const status = row.getValue<RequestStatusType>('status');
       if (!status) {
         return null;
       }
@@ -104,4 +108,4 @@ export const columns: ColumnDef<Request>[] = [
       return <RequestDropdownActions requestId={requestId} />;
     },
   },
-];
+] as const;

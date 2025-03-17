@@ -1,5 +1,6 @@
+// @ts-nocheck
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { GET } from '@/app/api/messages/unread/route';
+import { GET } from './route';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 

@@ -16,8 +16,8 @@ type DatePickerWithRangeProps = {
   className?: string;
   onSelect: (date?: DateRange) => void;
   placeholder?: string;
-  date?: DateRange;
-  setDate: (date: DateRange) => void;
+  date?: DateRange | undefined;
+  setDate: (date: DateRange | undefined) => void;
 };
 
 export function DatePickerWithRange({

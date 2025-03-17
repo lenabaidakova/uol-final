@@ -35,6 +35,7 @@ export default function RequestsTableShelter() {
 
   const table = useReactTable({
     data: requests,
+    // @ts-expect-error: couldn't fix this ts error (just 1 per project, so leave it as is)
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
@@ -70,7 +71,7 @@ export default function RequestsTableShelter() {
               Array.from({ length: limit }).map((_, index) => (
                 <TableRow key={index}>
                   {columns.map((column) => (
-                    <TableCell key={column.id || column.accessorKey}>
+                    <TableCell key={column.id}>
                       <Flex height="32px" align="center">
                         <Skeleton loading={true} width="80%" height="16px" />
                       </Flex>

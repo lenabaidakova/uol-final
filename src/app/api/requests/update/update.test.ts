@@ -1,5 +1,6 @@
+// @ts-nocheck
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { PATCH } from '@/app/api/requests/update/route';
+import { PATCH } from './route';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 

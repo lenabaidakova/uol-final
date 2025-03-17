@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw';
-import { User } from '@prisma/client';
+import { User } from 'next-auth';
 
-type RegisterRequestBody = Pick<User, 'email' | 'password' | 'role'>;
+type RegisterRequestBody = Pick<User, 'email' | 'role'> & { password: string };
 
 type RegisterResponseBody = {
   message: string;

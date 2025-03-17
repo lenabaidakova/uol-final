@@ -32,12 +32,17 @@ export async function POST(request: Request) {
       );
     }
 
-    // validate urgency and type
+    // validate urgency and type and status
     const typeRecord = await prisma.requestType.findUnique({
       where: { name: type },
     });
+
     const urgencyRecord = await prisma.requestUrgency.findUnique({
       where: { name: urgency },
+    });
+
+    const statusRecord = await prisma.requestStatus.findUnique({
+      where: { name: 'PENDING' },
     });
 
     if (!typeRecord) {
@@ -54,12 +59,20 @@ export async function POST(request: Request) {
       );
     }
 
+    if (!statusRecord) {
+      return NextResponse.json(
+        { message: 'System error: Status PENDING not found' },
+        { status: 500 }
+      );
+    }
+
     // create request
     const newRequest = await prisma.request.create({
       data: {
         title,
         typeId: typeRecord.id,
         urgencyId: urgencyRecord.id,
+        statusId: statusRecord.id, // add default PENDING status
         dueDate: dueDate ? new Date(dueDate) : null,
         details,
         location,

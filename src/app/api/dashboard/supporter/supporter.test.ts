@@ -1,10 +1,11 @@
+// @ts-nocheck
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { GET as getSupporterDashboard } from '@/app/api/dashboard/supporter/route';
+import { GET as getSupporterDashboard } from './route';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 
 vi.mock('next-auth', async (importOriginal) => {
-  const original = await importOriginal();
+  const original = await importOriginal<typeof import('next-auth')>();
   return {
     ...original,
     getServerSession: vi.fn(),

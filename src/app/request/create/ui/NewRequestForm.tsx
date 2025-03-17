@@ -67,7 +67,7 @@ export function NewRequestForm() {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    createRequest({ ...data });
+    createRequest({ ...data, dueDate: data.dueDate.toString() });
   }
 
   return (

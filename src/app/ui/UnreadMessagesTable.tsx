@@ -19,20 +19,13 @@ import {
 import { Flex, Link, Skeleton } from '@radix-ui/themes';
 import { ErrorApi } from '@/app/ui/ErrorApi';
 import {
+  UnreadMessage,
   UnreadMessagesQuery,
   useUnreadMessages,
 } from '@/hooks/api/useUnreadMessages';
 import UnreadLink from '@/app/ui/UnreadMessagesTable/UnreadLink';
 
-export type Message = {
-  requestId: string;
-  title: string;
-  unreadMessages: number;
-  lastMessageFrom: string;
-  lastMessageDate: string;
-};
-
-export const columns: ColumnDef<Message>[] = [
+export const columns: ColumnDef<UnreadMessage>[] = [
   {
     accessorKey: 'title',
     header: 'Title',
@@ -112,7 +105,7 @@ export default function UnreadMessagesTable() {
               Array.from({ length: limit }).map((_, index) => (
                 <TableRow key={index}>
                   {columns.map((column) => (
-                    <TableCell key={column.id || column.accessorKey}>
+                    <TableCell key={column.id}>
                       <Flex height="32px" align="center">
                         <Skeleton loading={true} width="80%" height="16px" />
                       </Flex>

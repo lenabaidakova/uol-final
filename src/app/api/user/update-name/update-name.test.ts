@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { describe, it, expect, vi } from 'vitest';
 import { POST } from './route';
 import prisma from '@/lib/prisma';

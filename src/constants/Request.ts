@@ -69,7 +69,7 @@ export const REQUEST_STATUS_LABELS = {
     label: 'Archived',
     icon: CircleOffIcon,
   },
-};
+} as const;
 
 export type RequestType = ObjectValues<typeof REQUEST_TYPE>;
 export type UrgencyType = ObjectValues<typeof URGENCY>;
