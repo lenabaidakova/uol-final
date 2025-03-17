@@ -59,15 +59,25 @@ export async function POST(request: Request) {
       },
     });
 
+    const isProduction = process.env.USE_BREVO === 'true';
+
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'localhost', // SMTP_HOST for docker container
-      port: Number(process.env.SMTP_PORT) || 1025, // SMTP_PORT for docker container
+      host: isProduction
+        ? process.env.BREVO_HOST
+        : process.env.SMTP_HOST || 'localhost',
+      port: isProduction ? 587 : Number(process.env.SMTP_PORT) || 1025,
       secure: false,
+      auth: isProduction
+        ? {
+            user: process.env.BREVO_EMAIL,
+            pass: process.env.BREVO_SMTP_KEY,
+          }
+        : undefined, // mailhog doesn't need auth
     });
 
     const confirmationUrl = `${process.env.NEXT_PUBLIC_APP_URL}/registration/confirmation?token=${confirmationToken}`;
     await transporter.sendMail({
-      from: 'no-reply@shelterconnect.com',
+      from: 'no-reply@keebeex.com',
       to: email,
       subject: 'Confirm your email',
       text: `Please confirm your email by clicking the link ${confirmationUrl}`,
