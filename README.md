@@ -1,87 +1,123 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Shelter Connect Application
 
-## Getting Started
+This platform helps animal shelters connect with their communities for support. Shelters can post requests 
+for supplies, services, and volunteers, while supporters can respond and communicate through a simple messaging system.
 
-Node v20.17.0
+## Production Deployment
 
-First, run the development server:
+- **Hosted application:** [https://keebeex.com](https://keebeex.com)
+- **Email service:** [Brevo](https://www.brevo.com/)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### **Test accounts in production**
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+To simplify testing, the following user accounts are available in the production environment:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Shelter account:**
+    - Email: `shelter@example.com`
+    - Password: `password123`
+- **Supporter account:**
+    - Email: `supporter@example.com`
+    - Password: `password123`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+These accounts allow you to log in and explore the platform features.
 
-## Learn More
+## Running the project locally
 
-To learn more about Next.js, take a look at the following resources:
+You can run the project in two ways: **locally** (manual setup) or **using Docker** (recommended for a full setup).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### **Option 1: Running locally (manual setup)**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+#### **Requirements**
 
-## Deploy on Vercel
+- **Node.js v20.17.0**
+- **SQLite** (no configuration needed)
+- **MailHog** (for local email testing - [Installation guide](https://github.com/mailhog/MailHog))
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+#### **Steps**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Clone the repository:**
+   ```shell
+   git clone https://github.com/lenabaidakova/uol-final.git
+   cd uol-final
+   ```
+2. **Install dependencies:**
+   ```shell
+   npm install
+   ```
+3. **Run database migrations:**
+   ```shell
+   npx prisma migrate dev --name init
+   ```
+4. **Build and start the application:**
+   ```shell
+   npm run build
+   npm run start
+   ```
+    - The application will be available at [http://localhost:3000](http://localhost:3000)
+    - MailHog UI (for email testing) at [http://localhost:8025](http://localhost:8025)
 
-# For report
+### **Option 2: Running with Docker (recommended)**
 
-prisma studio
+This method runs the full application, including the database and MailHog, inside Docker containers.
+
+#### **Steps**
+
+1. **Ensure Docker is installed** on your machine.
+2. **Run the application:**
+   ```shell
+   docker compose up --build
+   ```
+    - The application will be available at [http://localhost:3000](http://localhost:3000)
+    - MailHog UI (for email testing) at [http://localhost:8025](http://localhost:8025)
+
+### **Test accounts in development**
+
+The same test accounts are available when running locally:
+
+- **Shelter account:**
+    - Email: `shelter@example.com`
+    - Password: `password123`
+- **Supporter account:**
+    - Email: `supporter@example.com`
+    - Password: `password123`
+
+These accounts allow you to log in and interact with the platform in a local environment.
+
+## **Database Management**
+
+### **Prisma Studio (Database UI)**
 
 ```shell
 npx prisma studio
 ```
 
+### **Run migrations**
+
 ```shell
-npx prisma migrate dev --name name
+npx prisma migrate dev --name migration_name
 npx prisma generate
 ```
 
-Seed data
+### **Seed database**
 
 ```shell
 npx prisma db seed
 ```
 
-Emails
-
-```shell
-brew install mailhog
-mailhog
-```
-
-Recreate all and seed
+### **Reset and seed satabase**
 
 ```shell
 npx prisma migrate reset
 ```
 
+## **Stopping the application**
 
-```shell
-docker compose up --build
-```
-next.js http://localhost:3000
-mailhog http://localhost:8025
-
-Stop 
 ```shell
 docker compose down
 ```
 
-Rebuild and restart
+## **Rebuilding and restarting**
+
 ```shell
 docker compose up --build --force-recreate
 ```

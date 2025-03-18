@@ -53,9 +53,31 @@ async function main() {
 
   const hashedPassword = await bcrypt.hash('password123', 10);
 
-  // creating shelters
+  // creating a predefined shelter
+  const fixedShelter = await prisma.user.create({
+    data: {
+      email: 'shelter@example.com',
+      name: 'Kind Paws',
+      password: hashedPassword,
+      roleId: await getRoleId('SHELTER'),
+      verified: true,
+    },
+  });
+
+  // creating a predefined supporter
+  const fixedSupporter = await prisma.user.create({
+    data: {
+      email: 'supporter@example.com',
+      name: 'Alex Morgan',
+      password: hashedPassword,
+      roleId: await getRoleId('SUPPORTER'),
+      verified: true,
+    },
+  });
+
+  // creating additional shelters
   const shelters = await Promise.all(
-    Array.from({ length: 5 }, async (_, index) =>
+    Array.from({ length: 4 }, async () =>
       prisma.user.create({
         data: {
           email: faker.internet.email().toLowerCase(),
@@ -68,9 +90,11 @@ async function main() {
     )
   );
 
-  // creating supporters
+  shelters.push(fixedShelter); // include predefined shelter in the list
+
+  // creating additional supporters
   const supporters = await Promise.all(
-    Array.from({ length: 5 }, async (_, index) =>
+    Array.from({ length: 4 }, async () =>
       prisma.user.create({
         data: {
           email: faker.internet.email().toLowerCase(),
@@ -82,6 +106,8 @@ async function main() {
       })
     )
   );
+
+  supporters.push(fixedSupporter); // include predefined supporter in the list
 
   // creating requests
   const requestData = await Promise.all(
