@@ -242,39 +242,59 @@ async function main() {
   ];
 
   // creating requests
-  const requestData = await Promise.all(
-    Array.from({ length: 50 }, async (_, index) => {
-      const template = requestTemplates[index % requestTemplates.length];
-      const urgency = ['HIGH', 'MEDIUM', 'LOW'][index % 3];
-      const status = ['PENDING', 'IN_PROGRESS', 'COMPLETED', 'ARCHIVED'][
-        index % 4
-      ];
-      const locations = [
-        'London',
-        'Manchester',
-        'Birmingham',
-        'Liverpool',
-        'Leeds',
-      ];
+  const requestData = [];
+  let fixedSupporterInProgressCount = 0; // make sure the fixedSupporter has enough data for better demo
+  let fixedSupporterCompletedCount = 0;
 
-      return prisma.request.create({
-        data: {
-          title: `${template.title} #${index + 1}`,
-          typeId: await getTypeId(template.type),
-          urgencyId: await getUrgencyId(urgency),
-          statusId: await getStatusId(status),
-          dueDate: index % 5 === 0 ? new Date('2025-04-01') : null,
-          details: template.details,
-          location: locations[index % locations.length],
-          creatorId: shelters[index % shelters.length].id,
-          assignedToId:
-            status === 'IN_PROGRESS' || status === 'COMPLETED'
-              ? supporters[index % supporters.length].id
-              : null,
-        },
-      });
-    })
-  );
+  for (let index = 0; index < 1000; index++) {
+    const template = requestTemplates[index % requestTemplates.length];
+    const urgency = ['HIGH', 'MEDIUM', 'LOW'][index % 3];
+    const status = ['PENDING', 'IN_PROGRESS', 'COMPLETED', 'ARCHIVED'][
+      index % 4
+    ];
+    const locations = [
+      'London',
+      'Manchester',
+      'Birmingham',
+      'Liverpool',
+      'Leeds',
+    ];
+
+    let assignedToId = null;
+
+    // ensure fixedSupporter gets more requests
+    if (
+      status === 'IN_PROGRESS' &&
+      (index % 50 === 0 || fixedSupporterInProgressCount < 5)
+    ) {
+      assignedToId = fixedSupporter.id;
+      fixedSupporterInProgressCount++;
+    } else if (
+      status === 'COMPLETED' &&
+      (index % 100 === 0 || fixedSupporterCompletedCount < 5)
+    ) {
+      assignedToId = fixedSupporter.id;
+      fixedSupporterCompletedCount++;
+    } else if (status === 'IN_PROGRESS' || status === 'COMPLETED') {
+      assignedToId = supporters[index % supporters.length].id;
+    }
+
+    const request = await prisma.request.create({
+      data: {
+        title: `${template.title} #${index + 1}`,
+        typeId: await getTypeId(template.type),
+        urgencyId: await getUrgencyId(urgency),
+        statusId: await getStatusId(status),
+        dueDate: index % 5 === 0 ? new Date('2025-04-01') : null,
+        details: template.details,
+        location: locations[index % locations.length],
+        creatorId: shelters[index % shelters.length].id,
+        assignedToId,
+      },
+    });
+
+    requestData.push(request);
+  }
 
   // messages for supporter
   const supporterMessageTemplates = [
@@ -290,7 +310,7 @@ async function main() {
     'Let me know what is needed most, and I’ll try to help!',
   ];
 
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 500; i++) {
     const request = requestData[i % requestData.length];
     const shelter = shelters.find((s) => s.id === request.creatorId);
     const supporter = request.assignedToId
