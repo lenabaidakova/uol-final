@@ -41,7 +41,7 @@ export const URGENCY_LABELS = {
   },
   [URGENCY.LOW]: {
     label: 'Low',
-    badge: 'grass',
+    badge: 'gray',
   },
 } as const;
 
@@ -56,18 +56,22 @@ export const REQUEST_STATUS_LABELS = {
   [REQUEST_STATUS.PENDING]: {
     label: 'Pending',
     icon: CircleIcon,
+    color: 'amber',
   },
   [REQUEST_STATUS.IN_PROGRESS]: {
     label: 'In progress',
     icon: AlarmClockIcon,
+    color: 'blue',
   },
   [REQUEST_STATUS.COMPLETED]: {
     label: 'Completed',
     icon: CircleCheckIcon,
+    color: 'green',
   },
   [REQUEST_STATUS.ARCHIVED]: {
     label: 'Archived',
     icon: CircleOffIcon,
+    color: 'gray',
   },
 } as const;
 

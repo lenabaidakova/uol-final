@@ -97,7 +97,12 @@ export async function GET(request: Request) {
 
     // filter by role
     if (userRole === 'SHELTER') {
-      where.creatorId = userId;
+      where.creatorId = userId; // shelter sees only their own requests
+    } else if (userRole === 'SUPPORTER') {
+      where.OR = [
+        { status: { name: 'PENDING' } }, // supporters see all pending requests
+        { assignedToId: userId }, // and requests they were involved in
+      ];
     }
 
     // fetch requests with filters and pagination
@@ -111,6 +116,7 @@ export async function GET(request: Request) {
           type: { select: { name: true } },
           urgency: { select: { name: true } },
           status: { select: { name: true } },
+          creator: { select: { name: true } }, // need to get shelter name
         },
       }),
       prisma.request.count({ where }),
@@ -127,6 +133,7 @@ export async function GET(request: Request) {
         details: req.details,
         location: req.location,
         creatorId: req.creatorId,
+        shelterName: req.creator.name,
       })),
       pagination: {
         currentPage: page,

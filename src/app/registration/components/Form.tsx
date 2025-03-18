@@ -11,6 +11,8 @@ import { Box, Button, Card, Flex, Heading, Link, Text } from '@radix-ui/themes';
 import { ErrorApi } from '@/app/ui/ErrorApi';
 import { useState } from 'react';
 import { Callout } from '@/app/ui/Callout';
+import RouterLink from 'next/link';
+import { appRoutes } from '@/lib/appRoutes';
 
 const ROLE_OPTIONS = [
   {
@@ -144,7 +146,10 @@ export default function RegisterPage() {
 
           <Box mt="3" className="text-center">
             <Text size="2">
-              Already have an account? <Link href="/login">Log in</Link>
+              Already have an account?{' '}
+              <Link asChild>
+                <RouterLink href={appRoutes.login()}>Log in</RouterLink>
+              </Link>
             </Text>
           </Box>
         </form>

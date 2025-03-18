@@ -1,7 +1,7 @@
 'use client';
 
 import PageHeader from '@/app/ui/PageHeader';
-import { Badge, Box, Flex, Grid, Skeleton, Text } from '@radix-ui/themes';
+import { Badge, Box, Flex, Grid, Skeleton } from '@radix-ui/themes';
 import {
   Card,
   CardContent,
@@ -13,12 +13,17 @@ import { ChatCard } from '@/app/request/[:id]/ui/Chat';
 import RequestDropdownActions from '@/app/ui/RequestDropdownActions';
 import { usePathname } from 'next/navigation';
 import { useRequestById } from '@/hooks/api/useRequestById';
-import { REQUEST_STATUS_LABELS, URGENCY_LABELS } from '@/constants/Request';
+import { URGENCY_LABELS } from '@/constants/Request';
 import * as React from 'react';
 import { format } from 'date-fns';
 import { ErrorApi } from '@/app/ui/ErrorApi';
+import { useUserData } from '@/providers/UserProvider';
+import { ROLES } from '@/constants/Role';
+import RequestStatusBadge from '@/app/ui/RequestStatusBadge';
+import TakeInProgress from '@/app/request/[:id]/ui/TakeInProgress';
 
 export default function RequestViewBody() {
+  const { role } = useUserData();
   const pathname = usePathname();
   const requestId = pathname.split('/')[2];
   const { data, error, isLoading } = useRequestById({ id: requestId });
@@ -35,7 +40,7 @@ export default function RequestViewBody() {
         <PageHeader
           heading="Request details"
           columns="auto 1fr auto"
-          backLink="/shelter/requests"
+          backLink={true}
         />
         <Grid maxWidth="800px" m="auto" px="2" gap="2">
           <Skeleton height="30px" width="80%" />
@@ -50,29 +55,29 @@ export default function RequestViewBody() {
     return null;
   }
 
-  const Icon = REQUEST_STATUS_LABELS[request.status].icon;
-
   return (
     <>
       <PageHeader
         heading="Request details"
         columns="auto 1fr auto"
-        backLink="/shelter/requests"
-        actions={<RequestDropdownActions requestId={requestId} />}
+        backLink={true}
+        actions={
+          // show actions only if the user has Shelter role
+          role === ROLES.SHELTER ? (
+            <RequestDropdownActions
+              requestId={requestId}
+              requestStatus={request.status}
+            />
+          ) : (
+            <></>
+          )
+        }
       >
-        <div className="capitalize">
-          <Flex gap="2" align="center">
-            {Icon && (
-              <Text color="gray">
-                <Icon size="18px" />
-              </Text>
-            )}{' '}
-            <Text color="gray">
-              {' '}
-              {REQUEST_STATUS_LABELS[request.status].label}
-            </Text>
-          </Flex>
-        </div>
+        <Flex align="center" gap="5">
+          <RequestStatusBadge status={request.status} />
+
+          {role === ROLES.SUPPORTER && <TakeInProgress requestId={requestId} />}
+        </Flex>
       </PageHeader>
 
       <Box maxWidth="800px" m="auto" px="2">
@@ -89,7 +94,7 @@ export default function RequestViewBody() {
               </CardTitle>
               <CardDescription>
                 <Flex gap="2" justify="between">
-                  Paws and Claws Shelter, {request.location}
+                  {request.creatorName}, {request.location}
                   {!!request.dueDate && (
                     <Badge color="gray">{`Due ${format(request.dueDate, 'd MMMM yyyy')}`}</Badge>
                   )}

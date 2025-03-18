@@ -4,6 +4,7 @@ import {
   RequestListResponse,
 } from '@/hooks/api/useRequestList';
 import { RequestStatusType } from '@/constants/Request';
+import { RequestsQueryKeys } from '@/lib/queryKeyFactory';
 
 /**
 Hook to update the request list cache after a status change.
@@ -39,6 +40,16 @@ export function useRequestCacheUpdate() {
         ),
       });
     });
+
+    // update the individual request cache
+    const requestCacheKey = RequestsQueryKeys.byId(requestId);
+    queryClient.setQueryData(
+      requestCacheKey,
+      (cachedRequest: { request: Request | null }) => {
+        if (!cachedRequest) return null;
+        return { request: { ...cachedRequest.request, status: newStatus } };
+      }
+    );
   };
 
   return { updateStatus }; // return function so components can trigger cache updates

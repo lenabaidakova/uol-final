@@ -24,6 +24,7 @@ import {
   useUnreadMessages,
 } from '@/hooks/api/useUnreadMessages';
 import UnreadLink from '@/app/ui/UnreadMessagesTable/UnreadLink';
+import { format, parseISO } from 'date-fns';
 
 export const columns: ColumnDef<UnreadMessage>[] = [
   {
@@ -44,7 +45,13 @@ export const columns: ColumnDef<UnreadMessage>[] = [
   {
     accessorKey: 'lastMessageDate',
     header: 'Last message date',
-    cell: ({ row }) => <div>{row.getValue('lastMessageDate')}</div>,
+    cell: ({ row }) => {
+      const value: string = row.getValue('lastMessageDate');
+      const formattedDate = value
+        ? format(parseISO(value), 'MMMM d, yyyy')
+        : '-';
+      return <div>{formattedDate}</div>;
+    },
   },
   {
     accessorKey: 'unreadCount',

@@ -18,10 +18,12 @@ import {
 import { Flex, Skeleton } from '@radix-ui/themes';
 import { RequestListQuery, useRequestList } from '@/hooks/api/useRequestList';
 import { ErrorApi } from '@/app/ui/ErrorApi';
-import { columns } from '@/app/ui/RequestsTable/columns';
+import { getColumns } from '@/app/ui/RequestsTable/columns';
 import Filters from '@/app/ui/RequestsTable/Filters';
+import { useUserData } from '@/providers/UserProvider';
 
 export default function RequestsTableShelter() {
+  const { role } = useUserData();
   const [query, setQuery] = React.useState<RequestListQuery>({
     page: 1,
     limit: 5,
@@ -33,9 +35,11 @@ export default function RequestsTableShelter() {
     setQuery(updatedQuery);
   };
 
+  const columns = React.useMemo(() => getColumns(role), [role]);
+
   const table = useReactTable({
     data: requests,
-    // @ts-expect-error: couldn't fix this ts error
+    // @ts-expect-error: fix later
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
@@ -70,8 +74,8 @@ export default function RequestsTableShelter() {
             {isLoading ? (
               Array.from({ length: limit }).map((_, index) => (
                 <TableRow key={index}>
-                  {columns.map((column) => (
-                    <TableCell key={column.id}>
+                  {columns.map((column, columnIndex) => (
+                    <TableCell key={columnIndex}>
                       <Flex height="32px" align="center">
                         <Skeleton loading={true} width="80%" height="16px" />
                       </Flex>

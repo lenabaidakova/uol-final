@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import prisma from '@/lib/prisma';
+import { ROLES } from '@/constants/Role';
+import { REQUEST_STATUS } from '@/constants/Request';
 
 export async function PATCH(request: Request) {
   try {
@@ -33,8 +35,45 @@ export async function PATCH(request: Request) {
       );
     }
 
+    const userId = session.user.id;
+    const userRole = session.user.role;
+
+    // allow supporters to take requests in progress (only from Pending status)
+    if (
+      userRole === ROLES.SUPPORTER &&
+      updateData.status === REQUEST_STATUS.IN_PROGRESS
+    ) {
+      const pendingStatus = await prisma.requestStatus.findUnique({
+        where: { name: REQUEST_STATUS.PENDING },
+      });
+
+      if (existingRequest.statusId !== pendingStatus?.id) {
+        return NextResponse.json(
+          { message: 'Only pending requests can be taken' },
+          { status: 400 }
+        );
+      }
+
+      const inProgressStatus = await prisma.requestStatus.findUnique({
+        where: { name: REQUEST_STATUS.IN_PROGRESS },
+      });
+
+      const updatedRequest = await prisma.request.update({
+        where: { id },
+        data: {
+          statusId: inProgressStatus?.id,
+          assignedToId: userId, // assign to supporter
+        },
+      });
+
+      return NextResponse.json(
+        { message: 'Request taken successfully', request: updatedRequest },
+        { status: 200 }
+      );
+    }
+
     // check if owner
-    if (existingRequest.creatorId !== session.user.id) {
+    if (userRole === ROLES.SHELTER && existingRequest.creatorId !== userId) {
       return NextResponse.json(
         {
           message:

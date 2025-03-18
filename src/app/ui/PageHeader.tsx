@@ -1,14 +1,16 @@
+'use client';
+
 import { Flex, Heading, IconButton, Grid } from '@radix-ui/themes';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import React from 'react';
-import RouterLink from 'next/link';
 import { ArrowLeftIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 type PageHeaderProps = {
   heading?: string;
   actions?: React.ReactNode;
   children?: React.ReactNode;
-  backLink?: string;
+  backLink?: boolean;
   maxWidth?: string;
   columns?: string;
 };
@@ -20,6 +22,12 @@ export default function PageHeader({
   children,
   columns,
 }: PageHeaderProps) {
+  const router = useRouter();
+
+  const handleBackNavigation = () => {
+    router.back();
+  };
+
   return (
     <>
       <header className="sticky top-0 z-50 w-full border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/95">
@@ -28,10 +36,12 @@ export default function PageHeader({
           {(children || heading) && (
             <Flex gap="3" align="center" justify="start">
               {!!backLink && (
-                <IconButton color="gray" variant="ghost" asChild>
-                  <RouterLink href={backLink}>
-                    <ArrowLeftIcon size={16} />
-                  </RouterLink>
+                <IconButton
+                  color="gray"
+                  variant="ghost"
+                  onClick={handleBackNavigation}
+                >
+                  <ArrowLeftIcon size={16} />
                 </IconButton>
               )}
               {!!heading && <Heading size="4">{heading}</Heading>}

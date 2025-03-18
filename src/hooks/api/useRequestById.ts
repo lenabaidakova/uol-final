@@ -5,6 +5,7 @@ import {
   RequestType,
   UrgencyType,
 } from '@/constants/Request';
+import { RequestsQueryKeys } from '@/lib/queryKeyFactory';
 
 type RequestByIdResponse = {
   request: {
@@ -16,6 +17,7 @@ type RequestByIdResponse = {
     type: RequestType;
     urgency: UrgencyType;
     status: RequestStatusType;
+    creatorName: string;
   };
 };
 
@@ -38,7 +40,7 @@ export function useRequestById(
   options?: UseQueryOptions<RequestByIdResponse>
 ) {
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['useRequestById', query],
+    queryKey: RequestsQueryKeys.byId(query.id),
     enabled: !!query.id,
     queryFn: () => getRequestById(query),
     retry: 2,

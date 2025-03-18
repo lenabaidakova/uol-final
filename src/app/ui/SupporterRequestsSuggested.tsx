@@ -5,6 +5,7 @@ import { Link, Skeleton } from '@radix-ui/themes';
 import { format } from 'date-fns';
 import { appRoutes } from '@/lib/appRoutes';
 import * as React from 'react';
+import RouterLink from 'next/link';
 
 type SuggestedRequest = {
   id: string;
@@ -61,8 +62,10 @@ export default function SupporterRequestsSuggested({ data, isLoading }: Props) {
               </Avatar>
 
               <div className="ml-4 space-y-1">
-                <Link color="gray" href={appRoutes.request(item.id)}>
-                  {item.title}
+                <Link color="gray" asChild>
+                  <RouterLink href={appRoutes.request(item.id)}>
+                    {item.title}
+                  </RouterLink>
                 </Link>
 
                 <p className="text-sm text-muted-foreground">

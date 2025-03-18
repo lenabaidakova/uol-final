@@ -1,5 +1,5 @@
 import PageHeader from '@/app/ui/PageHeader';
-import { Box, Grid, Skeleton } from '@radix-ui/themes';
+import { Box, Grid, Link, Skeleton } from '@radix-ui/themes';
 import {
   Card,
   CardHeader,
@@ -13,6 +13,8 @@ import { SupporterRequestsInProgress } from '@/app/ui/SupporterRequestsInProgres
 import SupporterRequestsSuggested from '@/app/ui/SupporterRequestsSuggested';
 import { useSupporterDashboard } from '@/hooks/api/useSupporterDashboard';
 import { useUserData } from '@/providers/UserProvider';
+import { appRoutes } from '@/lib/appRoutes';
+import RouterLink from 'next/link';
 
 export default function SupporterDashboard() {
   const { name } = useUserData();
@@ -68,7 +70,11 @@ export default function SupporterDashboard() {
             <CardContent>
               <div className="text-2xl font-bold">
                 <Skeleton loading={isLoading}>
-                  {data?.unreadMessages || 0}
+                  <Link color="gray" underline="always" asChild>
+                    <RouterLink href={appRoutes.unread()}>
+                      {data?.unreadMessages || 0}
+                    </RouterLink>
+                  </Link>
                 </Skeleton>
               </div>
             </CardContent>

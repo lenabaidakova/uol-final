@@ -1,6 +1,6 @@
 'use client';
 
-import { BadgeCheck, LogOut, ChevronsUpDown } from 'lucide-react';
+import { BadgeCheck, ChevronsUpDown } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -18,6 +18,9 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
+import RouterLink from 'next/link';
+import { appRoutes } from '@/lib/appRoutes';
+import LogoutLink from '@/app/ui/LogoutLink';
 
 export function SidebarUser({
   user,
@@ -70,15 +73,19 @@ export function SidebarUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
+              <DropdownMenuItem asChild>
+                <RouterLink href={appRoutes.account()}>
+                  <BadgeCheck />
+                  Account
+                </RouterLink>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut />
-              Log out
+            <DropdownMenuItem
+              onSelect={(e) => e.preventDefault()} // Disable onSelect and onClick events as we need to keep the dialog open
+              onClick={(e) => e.preventDefault()}
+            >
+              <LogoutLink />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

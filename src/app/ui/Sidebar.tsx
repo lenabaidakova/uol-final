@@ -48,7 +48,7 @@ const items = [
 
 export default function AppSidebar() {
   const { data } = useMessagesUnreadExist();
-  const { role } = useUserData();
+  const { role, name, email } = useUserData();
 
   const isShelter = role === ROLES.SHELTER;
 
@@ -103,17 +103,17 @@ export default function AppSidebar() {
         {isShelter ? (
           <SidebarUser
             user={{
-              name: 'Paws and Claws Shelter',
+              name: name || '',
               avatar: 'https://robohash.org/XPL.png?set=set4',
-              email: 'sarah@paws.com',
+              email: email || '',
             }}
           />
         ) : (
           <SidebarUser
             user={{
-              name: 'Alex Johnson',
+              name: name || '',
               avatar: 'https://robohash.org/aj.png?set=set4',
-              email: 'alex@email.com',
+              email: email || '',
             }}
           />
         )}

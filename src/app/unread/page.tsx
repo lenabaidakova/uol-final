@@ -1,5 +1,3 @@
-'use client';
-
 import MainLayout from '@/app/ui/MainLayout';
 import PageHeader from '@/app/ui/PageHeader';
 import { Box } from '@radix-ui/themes';

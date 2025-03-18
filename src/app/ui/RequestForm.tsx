@@ -1,10 +1,6 @@
-'use client';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-
-import { useToast } from '@/hooks/use-toast';
 import {
   Form,
   FormControl,
@@ -32,12 +28,9 @@ import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { REQUEST_TYPE, URGENCY } from '@/constants/Request';
-import { useRequestCreate } from '@/hooks/api/useRequestCreate';
 import { Box, Button } from '@radix-ui/themes';
-import { ErrorApi } from '@/app/ui/ErrorApi';
-import { useRouter } from 'next/navigation';
 
-const FormSchema = z.object({
+export const RequestFormSchema = z.object({
   title: z.string().min(2),
   dueDate: z.date(),
   details: z.string(),
@@ -46,37 +39,33 @@ const FormSchema = z.object({
   urgency: z.nativeEnum(URGENCY),
 });
 
-export function NewRequestForm() {
-  const router = useRouter();
-  const { toast } = useToast();
-  const {
-    mutate: createRequest,
-    isMutating,
-    error,
-  } = useRequestCreate({
-    onSuccess: () => {
-      toast({
-        title: 'Request created',
-        description: 'Your request is now visible',
-      });
-      router.push('/');
+type RequestFormProps = {
+  defaultValues?: Omit<z.infer<typeof RequestFormSchema>, 'dueDate'> & {
+    dueDate: string;
+  };
+  onSubmit: (data: z.infer<typeof RequestFormSchema>) => void;
+  isMutating: boolean;
+  isEdit?: boolean;
+};
+
+export function RequestForm({
+  onSubmit,
+  isMutating,
+  defaultValues,
+  isEdit,
+}: RequestFormProps) {
+  const form = useForm<z.infer<typeof RequestFormSchema>>({
+    resolver: zodResolver(RequestFormSchema),
+    defaultValues: {
+      ...defaultValues,
+      dueDate: defaultValues?.dueDate
+        ? new Date(defaultValues.dueDate)
+        : undefined,
     },
   });
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-  });
-
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    createRequest({ ...data, dueDate: data.dueDate.toString() });
-  }
 
   return (
     <Box>
-      {!!error && (
-        <Box mb="3">
-          <ErrorApi error={error} />
-        </Box>
-      )}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
@@ -230,7 +219,7 @@ export function NewRequestForm() {
           />
 
           <Button type="submit" highContrast color="gray" loading={isMutating}>
-            Create request
+            {isEdit ? 'Update request' : 'Create request'}
           </Button>
         </form>
       </Form>

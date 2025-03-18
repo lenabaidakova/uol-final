@@ -4,6 +4,7 @@ import prisma from '@/lib/prisma';
 import bcrypt from 'bcrypt';
 import { Prisma } from '@prisma/client';
 import { JWT } from 'next-auth/jwt';
+import { ROLES } from '@/constants/Role';
 
 // prisma doesn't generate relations types by default, need to use Prisma utils
 // https://github.com/prisma/prisma/discussions/10928
@@ -72,9 +73,10 @@ export const authOptions: AuthOptions = {
         include: { role: true },
       })) as UserWithRole | null;
 
-      if (updatedUser && updatedUser.role) {
-        if (token.role !== updatedUser.role.name) {
-          token.role = updatedUser.role.name;
+      // update token info if user updated name
+      if (updatedUser && updatedUser.name) {
+        if (token.name !== updatedUser.name) {
+          token.name = updatedUser.name;
         }
       }
 
@@ -85,7 +87,7 @@ export const authOptions: AuthOptions = {
         session.user.id = String(token.id ?? '');
         session.user.name = token.name ?? '';
         session.user.email = token.email ?? '';
-        session.user.role = String(token.role ?? 'SUPPORTER');
+        session.user.role = String(token.role ?? ROLES.SUPPORTER);
       }
       return session;
     },

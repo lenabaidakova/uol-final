@@ -69,7 +69,7 @@ export async function POST(request: Request) {
       secure: false,
       auth: isProduction
         ? {
-            user: process.env.BREVO_EMAIL,
+            user: process.env.BREVO_EMAIL, // use Brevo on prod
             pass: process.env.BREVO_SMTP_KEY,
           }
         : undefined, // mailhog doesn't need auth

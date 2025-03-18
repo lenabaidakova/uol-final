@@ -21,6 +21,7 @@ export async function GET(request: Request) {
         type: { select: { name: true } },
         urgency: { select: { name: true } },
         status: { select: { name: true } },
+        creator: { select: { id: true, name: true } },
       },
     });
 
@@ -41,7 +42,8 @@ export async function GET(request: Request) {
         dueDate: requestItem.dueDate,
         details: requestItem.details,
         location: requestItem.location,
-        creatorId: requestItem.creatorId,
+        creatorId: requestItem.creator.id,
+        creatorName: requestItem.creator.name,
       },
     });
   } catch (error) {

@@ -1,5 +1,3 @@
-// documentation https://socket.io/how-to/use-with-nextjs
-
 const { createServer } = require('http');
 const next = require('next');
 const { Server } = require('socket.io');
@@ -35,6 +33,17 @@ app.prepare().then(() => {
       console.log('Message received:', { requestId, senderId, text });
 
       try {
+        // fetch sender's name
+        const sender = await prisma.user.findUnique({
+          where: { id: senderId },
+          select: { name: true },
+        });
+
+        if (!sender) {
+          console.error('Sender not found');
+          return;
+        }
+
         // save message in db
         const savedMessage = await prisma.message.create({
           data: { requestId, senderId, text },
@@ -80,7 +89,10 @@ app.prepare().then(() => {
         }
 
         // emit event with saved message
-        io.to(requestId).emit('receive_message', savedMessage);
+        io.to(requestId).emit('receive_message', {
+          ...savedMessage,
+          senderName: sender.name,
+        });
       } catch (error) {
         console.error('Error saving message:', error);
       }

@@ -12,6 +12,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSession } from 'next-auth/react';
 
+// form validation schema
 const validationSchema = z.object({
   newName: z.string().max(32, 'Maximum 32 characters allowed'),
 });
@@ -49,6 +50,7 @@ export function AccountRenamePopup({ name, id }: AccountRenamePopupProps) {
     handleSubmit,
   } = methods;
 
+  // rename account
   const handleCreation = async (
     data: Pick<UpdateUserNameData, 'newName'>,
     e?: React.BaseSyntheticEvent

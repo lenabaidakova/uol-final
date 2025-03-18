@@ -1,3 +1,5 @@
+// describes API endpoints in typescript and zod for swagger; used to generate /docs page with API documentation
+
 import { initContract } from '@ts-rest/core';
 import { z } from 'zod';
 

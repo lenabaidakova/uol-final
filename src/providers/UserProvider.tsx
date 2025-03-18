@@ -1,5 +1,6 @@
 'use client';
 
+// user provider for easy access to users data from any component on the client
 import React, {
   createContext,
   useContext,
@@ -13,6 +14,7 @@ import { RoleType } from '@/constants/Role';
 interface RoleContextType {
   role: RoleType | null;
   name: string | null;
+  email: string | null;
   setRole: React.Dispatch<React.SetStateAction<RoleType | null>>;
 }
 
@@ -28,6 +30,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const { data: session } = useSession();
   const [role, setRole] = useState<RoleType | null>(null);
   const [name, setName] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
     if (session?.user) {
@@ -37,11 +40,14 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       if (session.user.name && session.user.name !== name) {
         setName(session.user.name);
       }
+      if (session.user.email && session.user.email !== email) {
+        setEmail(session.user.email);
+      }
     }
   }, [session, role, name]);
 
   return (
-    <UserContext.Provider value={{ role, name, setRole }}>
+    <UserContext.Provider value={{ role, name, email, setRole }}>
       {children}
     </UserContext.Provider>
   );

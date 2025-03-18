@@ -16,15 +16,26 @@ import RouterLink from 'next/link';
 import { appRoutes } from '@/lib/appRoutes';
 import CompleteRequest from '@/app/ui/RequestDropdownActions/CompleteRequest';
 import ArchiveRequest from '@/app/ui/RequestDropdownActions/ArchiveRequest';
+import { REQUEST_STATUS, RequestStatusType } from '@/constants/Request';
+import { useUserData } from '@/providers/UserProvider';
+import { ROLES } from '@/constants/Role';
 
 type RequestDropdownActionsProps = {
   requestId: string;
+  requestStatus: RequestStatusType;
 };
 
 export default function RequestDropdownActions({
   requestId,
+  requestStatus,
 }: RequestDropdownActionsProps) {
+  const { role } = useUserData();
   const { isMobile } = useSidebar();
+
+  // request actions are forbidden for Supporter
+  if (role === ROLES.SUPPORTER) {
+    return null;
+  }
 
   return (
     <DropdownMenu>
@@ -40,16 +51,27 @@ export default function RequestDropdownActions({
         sideOffset={4}
       >
         <DropdownMenuGroup>
-          <CompleteRequest requestId={requestId} />
+          {(requestStatus === REQUEST_STATUS.IN_PROGRESS ||
+            requestStatus === REQUEST_STATUS.PENDING) && (
+            <CompleteRequest requestId={requestId} />
+          )}
 
-          <DropdownMenuItem asChild>
-            <RouterLink href={appRoutes.request(requestId)}>
-              <Pencil /> Edit
-            </RouterLink>
-          </DropdownMenuItem>
+          {(requestStatus === REQUEST_STATUS.IN_PROGRESS ||
+            requestStatus === REQUEST_STATUS.PENDING) && (
+            <DropdownMenuItem asChild>
+              <RouterLink href={appRoutes.requestUpdate(requestId)}>
+                <Pencil /> Edit
+              </RouterLink>
+            </DropdownMenuItem>
+          )}
         </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <ArchiveRequest requestId={requestId} />
+
+        {requestStatus !== REQUEST_STATUS.ARCHIVED && (
+          <>
+            <DropdownMenuSeparator />
+            <ArchiveRequest requestId={requestId} />
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

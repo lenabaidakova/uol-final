@@ -23,6 +23,7 @@ type FiltersProps = {
   setQuery: (query: RequestListQuery) => void;
 };
 
+// requests table filters
 export default function Filters({ setQuery, query }: FiltersProps) {
   const [date, setDate] = React.useState<DateRange | undefined>();
   const [title, setTitle] = React.useState('');
@@ -79,8 +80,8 @@ export default function Filters({ setQuery, query }: FiltersProps) {
   };
 
   return (
-    <Flex py="4" justify="between" align="center" gap="2">
-      <Flex align="center" gap="2">
+    <Flex py="4" justify="between" align="center" gap="3" wrap="wrap">
+      <Flex align="center" gap="3" wrap="wrap">
         <Box>
           <Input
             placeholder="Search requests by title..."
@@ -126,7 +127,7 @@ export default function Filters({ setQuery, query }: FiltersProps) {
         </Box>
       </Flex>
 
-      <Flex align="center" gap="2">
+      <Flex align="center" gap="3" wrap="wrap">
         <DatePickerWithRange
           date={date}
           setDate={setDate}

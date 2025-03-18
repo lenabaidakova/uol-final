@@ -32,7 +32,7 @@ export async function GET(request: Request) {
     const skip = (page - 1) * limit;
 
     // fetch unread messages
-    const unreadMessages = await prisma.unreadMessage.findMany({
+    const allUnreadMessages = await prisma.unreadMessage.findMany({
       where: { userId },
       include: {
         message: {
@@ -43,12 +43,10 @@ export async function GET(request: Request) {
         },
       },
       orderBy: { createdAt: 'desc' }, // order by most recent
-      skip,
-      take: limit,
     });
 
     // group messages by request
-    const unreadRequests = unreadMessages.reduce(
+    const groupedUnreadRequests = allUnreadMessages.reduce(
       (acc, unread) => {
         const { request, sender, createdAt } = unread.message;
         const existing = acc.find((r) => r.requestId === request.id);
@@ -75,16 +73,22 @@ export async function GET(request: Request) {
       }[]
     );
 
-    // total amount of messages
-    const totalUnread = await prisma.unreadMessage.count({ where: { userId } });
+    // apply pagination after grouping
+    const paginatedUnreadRequests = groupedUnreadRequests.slice(
+      skip,
+      skip + limit
+    );
+
+    // total amount of unread requests
+    const totalUnreadRequests = groupedUnreadRequests.length;
 
     return NextResponse.json({
-      unreadRequests,
+      unreadRequests: paginatedUnreadRequests,
       pagination: {
         currentPage: page,
         limit,
-        totalUnread,
-        totalPages: Math.ceil(totalUnread / limit),
+        totalUnread: totalUnreadRequests,
+        totalPages: Math.ceil(totalUnreadRequests / limit),
       },
     });
   } catch (error) {

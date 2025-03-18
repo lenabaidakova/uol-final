@@ -47,6 +47,7 @@ You can run the project in two ways: **locally** (manual setup) or **using Docke
 3. **Run database migrations:**
    ```shell
    npx prisma migrate dev --name init
+   npx prisma generate
    ```
 4. **Build and start the application:**
    ```shell

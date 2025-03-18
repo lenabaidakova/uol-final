@@ -3,11 +3,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { appRoutes } from '@/lib/appRoutes';
 import { Link, Skeleton } from '@radix-ui/themes';
 import { format } from 'date-fns';
+import RouterLink from 'next/link';
 
 type RecentRequest = {
   id: string;
   title: string;
-  supporter?: { name: string } | null;
+  assignedTo?: { name: string } | null;
   updatedAt: string;
 };
 
@@ -40,8 +41,8 @@ export function RecentRequestsInProgress({
   return (
     <div className="space-y-8">
       {data.map((item) => {
-        const initials = item.supporter?.name
-          ? item.supporter.name
+        const initials = item.assignedTo?.name
+          ? item.assignedTo.name
               .split(' ')
               .map((n) => n[0])
               .join('')
@@ -58,11 +59,13 @@ export function RecentRequestsInProgress({
               <AvatarFallback>{initials}</AvatarFallback>
             </Avatar>
             <div className="ml-4 space-y-1">
-              <Link color="gray" href={appRoutes.request(item.id)}>
-                {item.title}
+              <Link color="gray" asChild>
+                <RouterLink href={appRoutes.request(item.id)}>
+                  {item.title}
+                </RouterLink>
               </Link>
               <p className="text-sm text-muted-foreground">
-                {item.supporter?.name || 'Unknown supporter'}
+                {item.assignedTo?.name || 'Unknown supporter'}
               </p>
             </div>
             <div className="ml-auto text-sm">

@@ -1,5 +1,5 @@
 import PageHeader from '@/app/ui/PageHeader';
-import { Box, Grid, Skeleton } from '@radix-ui/themes';
+import { Box, Grid, Link, Skeleton } from '@radix-ui/themes';
 import {
   Card,
   CardHeader,
@@ -7,20 +7,22 @@ import {
   CardContent,
   CardDescription,
 } from '@/components/ui/card';
-import { Check, Clipboard, MessageCircle } from 'lucide-react';
+import { Check, CircleIcon, MessageCircle } from 'lucide-react';
 import { RecentRequestsInProgress } from '@/app/ui/RecentRequestsInProgress';
 import { RequestsChart } from '@/app/ui/RequestsChart';
 import { useShelterDashboard } from '@/hooks/api/useShelterDashboard';
+import { useUserData } from '@/providers/UserProvider';
+import RouterLink from 'next/link';
+import { appRoutes } from '@/lib/appRoutes';
+import React from 'react';
 
 export default function ShelterDashboard() {
+  const { name } = useUserData();
   const { data, isLoading } = useShelterDashboard();
 
   return (
     <>
-      <PageHeader
-        heading="Paws and Claws Shelter Dashboard"
-        columns="auto 1fr auto"
-      />
+      <PageHeader heading={`${name}'s Dashboard`} columns="auto 1fr auto" />
 
       <Box maxWidth="1400px" m="auto" px="4">
         <Grid gap="3" columns="1fr 1fr 1fr">
@@ -29,7 +31,7 @@ export default function ShelterDashboard() {
               <CardTitle className="text-sm font-medium">
                 Active requests
               </CardTitle>
-              <Clipboard className="h-4 w-4 text-muted-foreground" />
+              <CircleIcon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -65,7 +67,11 @@ export default function ShelterDashboard() {
             <CardContent>
               <div className="text-2xl font-bold">
                 <Skeleton loading={isLoading}>
-                  {data?.unreadMessages || 0}
+                  <Link color="gray" underline="always" asChild>
+                    <RouterLink href={appRoutes.unread()}>
+                      {data?.unreadMessages || 0}
+                    </RouterLink>
+                  </Link>
                 </Skeleton>
               </div>
             </CardContent>

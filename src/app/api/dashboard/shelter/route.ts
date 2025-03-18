@@ -42,7 +42,7 @@ export async function GET() {
 
     // fetch unread messages
     const unreadMessages = await prisma.unreadMessage.count({
-      where: { request: { creatorId: shelterId } },
+      where: { userId: shelterId },
     });
 
     // fetch 10 most recent requests that changed to in progress
