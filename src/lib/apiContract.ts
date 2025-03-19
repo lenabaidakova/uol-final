@@ -340,4 +340,73 @@ export const contract = c.router({
     },
     summary: 'Retrieve list of unique request locations',
   },
+  getDashboardStats: {
+    method: 'GET',
+    path: '/api/shelter/dashboard',
+    summary: 'Retrieve dashboard statistics for shelter',
+    description:
+      'Returns statistics about active requests, fulfilled requests, unread messages and recent request activity',
+    responses: {
+      200: z.object({
+        activeRequests: z.number().int().min(0),
+        fulfilledRequests: z.number().int().min(0),
+        unreadMessages: z.number().int().min(0),
+        recentRequests: z.array(
+          z.object({
+            id: z.string(),
+            title: z.string(),
+            assignedTo: z.object({ name: z.string() }).nullable(),
+            updatedAt: z.string().datetime(),
+          })
+        ),
+        stats: z.array(
+          z.object({
+            month: z.string(),
+            created: z.number().int().min(0),
+            fulfilled: z.number().int().min(0),
+          })
+        ),
+      }),
+      401: z.object({ message: z.literal('Unauthorized') }),
+      403: z.object({
+        message: z.literal('Only shelters can access dashboard'),
+      }),
+      500: z.object({ message: z.literal('Internal server error') }),
+    },
+  },
+  getSupporterDashboardStats: {
+    method: 'GET',
+    path: '/api/supporter/dashboard',
+    summary: 'Retrieve dashboard statistics for supporter',
+    description:
+      'Returns statistics about requests in progress, fulfilled requests, unread messages, recent assigned requests.',
+    responses: {
+      200: z.object({
+        requestsInProgress: z.number().int().min(0),
+        fulfilledRequests: z.number().int().min(0),
+        unreadMessages: z.number().int().min(0),
+        recentRequests: z.array(
+          z.object({
+            id: z.string(),
+            title: z.string(),
+            creator: z.object({ name: z.string() }),
+            dueDate: z.string().datetime().nullable(),
+          })
+        ),
+        suggestedRequests: z.array(
+          z.object({
+            id: z.string(),
+            title: z.string(),
+            creator: z.object({ name: z.string() }),
+            dueDate: z.string().datetime().nullable(),
+          })
+        ),
+      }),
+      401: z.object({ message: z.literal('Unauthorized') }),
+      403: z.object({
+        message: z.literal('Only supporters can access dashboard'),
+      }),
+      500: z.object({ message: z.literal('Internal server error') }),
+    },
+  },
 });

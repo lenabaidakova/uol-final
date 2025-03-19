@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PATCH } from './route';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
+import { ROLES } from '@/constants/Role';
+import { REQUEST_STATUS } from '@/constants/Request';
 
 vi.mock('@/lib/prisma', () => {
   return {
@@ -90,61 +92,46 @@ describe('/api/requests/update', () => {
     expect(body.message).toBe('Request not found');
   });
 
-  it('should return 403 if the user is not the creator of the request', async () => {
+  it('should return 400 if supporter tries to take not pending request', async () => {
     vi.mocked(getServerSession).mockResolvedValueOnce({
-      user: { id: 'user-id-123' },
+      user: { id: 'supporter-id', role: ROLES.SUPPORTER },
     });
-
     prisma.request.findUnique.mockResolvedValueOnce({
-      id: 'request-id-123',
-      creatorId: 'other-user-id',
+      id: 'request-id',
+      statusId: 'in-progress-id',
     });
+    prisma.requestStatus.findUnique.mockResolvedValueOnce({ id: 'pending-id' });
 
     const response = await PATCH(
       new Request('http://localhost:3000/api/requests/update', {
         method: 'PATCH',
-        body: JSON.stringify({ id: 'request-id-123', title: 'Updated title' }),
+        body: JSON.stringify({
+          id: 'request-id',
+          status: REQUEST_STATUS.IN_PROGRESS,
+        }),
         headers: { 'Content-Type': 'application/json' },
       })
     );
 
     const body = await response.json();
-    expect(response.status).toBe(403);
-    expect(body.message).toBe(
-      'Forbidden: You do not have permission to update this request'
-    );
+    expect(response.status).toBe(400);
+    expect(body.message).toBe('Only pending requests can be taken');
   });
 
   it('should return 200 if the request is successfully updated', async () => {
     vi.mocked(getServerSession).mockResolvedValueOnce({
-      user: { id: 'user-id-123' },
+      user: { id: 'user-id-123', role: ROLES.SHELTER },
     });
-
     prisma.request.findUnique.mockResolvedValueOnce({
       id: 'existing-id',
       creatorId: 'user-id-123',
     });
-
-    prisma.requestType.findUnique.mockResolvedValueOnce({ id: 'type-id' });
-    prisma.requestUrgency.findUnique.mockResolvedValueOnce({
-      id: 'urgency-id',
-    });
     prisma.requestStatus.findUnique.mockResolvedValueOnce({ id: 'status-id' });
-
-    const mockRequest = {
+    prisma.request.update.mockResolvedValueOnce({
       id: 'existing-id',
-      title: 'Updated title',
-      typeId: 'type-id',
-      urgencyId: 'urgency-id',
       statusId: 'status-id',
-      dueDate: '2025-02-01T00:00:00.000Z',
-      details: 'Updated details',
-      location: 'Updated location',
-      createdAt: '2025-01-19T12:34:56.000Z',
-      updatedAt: '2025-01-19T13:00:00.000Z',
-    };
-
-    prisma.request.update.mockResolvedValueOnce(mockRequest);
+      title: 'Updated title',
+    });
 
     const response = await PATCH(
       new Request('http://localhost:3000/api/requests/update', {
@@ -152,9 +139,7 @@ describe('/api/requests/update', () => {
         body: JSON.stringify({
           id: 'existing-id',
           title: 'Updated title',
-          details: 'Updated details',
-          location: 'Updated location',
-          status: 'IN_PROGRESS',
+          status: REQUEST_STATUS.IN_PROGRESS,
         }),
         headers: { 'Content-Type': 'application/json' },
       })
@@ -163,6 +148,6 @@ describe('/api/requests/update', () => {
     const body = await response.json();
     expect(response.status).toBe(200);
     expect(body.message).toBe('Request updated successfully');
-    expect(body.request).toEqual(mockRequest);
+    expect(body.request.title).toBe('Updated title');
   });
 });

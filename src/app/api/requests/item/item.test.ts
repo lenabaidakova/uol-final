@@ -25,7 +25,7 @@ describe('/api/requests/item', () => {
   });
 
   it('should return 404 if request with given id is not found', async () => {
-    prisma.request.findUnique.mockResolvedValueOnce(null);
+    vi.mocked(prisma.request.findUnique).mockResolvedValueOnce(null);
 
     const response = await GET(
       new Request('http://localhost:3000/api/requests/item?id=nonexistent-id')
@@ -46,7 +46,7 @@ describe('/api/requests/item', () => {
       dueDate: null,
       details: 'Request details',
       location: 'Chicago',
-      creatorId: 'user-id-456',
+      creator: { id: 'user-id-456', name: 'John Doe' },
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -69,6 +69,7 @@ describe('/api/requests/item', () => {
       details: 'Request details',
       location: 'Chicago',
       creatorId: 'user-id-456',
+      creatorName: 'John Doe',
     });
   });
 });

@@ -1,0 +1,95 @@
+7ea218a - e.baidakova, 2025-03-19 : Final recheck/fixes before submission
+bf27a28 - e.baidakova, 2025-03-18 : Improved seed script for demo
+cee32e2 - e.baidakova, 2025-03-18 : Final recheck/fixes before submission
+67f37b6 - e.baidakova, 2025-03-18 : Updated project Readme
+c69c033 - e.baidakova, 2025-03-17 : Added Brevo email provider for production.
+cd6b41f - e.baidakova, 2025-03-17 : Wrap the app in Docker for production
+2b06d67 - e.baidakova, 2025-03-17 : Final cleanup: added registration toast
+f051e5e - e.baidakova, 2025-03-17 : Fix linter errors, run prettier for formatting, set up production build and migrate to node 20.
+2a5d121 - e.baidakova, 2025-03-17 : Final clean up: typescript types fix
+9dd9523 - e.baidakova, 2025-03-17 : Final clean up: remove unused components
+9493349 - e.baidakova, 2025-03-17 : Final clean up: typescript types fix
+3cdb0c6 - e.baidakova, 2025-03-17 : Final clean up: typescript types fix
+b8d465c - e.baidakova, 2025-03-17 : Final clean up: add unread messages indicator to sidebar
+cc796ff - e.baidakova, 2025-03-16 : Final clean up
+a0dcf77 - e.baidakova, 2025-03-16 : Final clean up
+50bb5a8 - e.baidakova, 2025-03-03 : Supporter dashboard
+36b9a61 - e.baidakova, 2025-03-03 : Supporter dashboard endpoint
+5b76209 - e.baidakova, 2025-03-02 : fix role fetch in user provider
+793f41b - e.baidakova, 2025-03-02 : shelter dashboard
+a4610aa - e.baidakova, 2025-03-02 : shelter dashboard endpoint
+bb2be84 - e.baidakova, 2025-02-11 : Clean up
+17fa074 - e.baidakova, 2025-02-09 : Clean up
+87f434a - e.baidakova, 2025-02-08 : Added swagger documentation for API
+5385f46 - e.baidakova, 2025-02-08 : Refactor request model to use foreign keys for type, urgency and status
+47e31ce - e.baidakova, 2025-02-08 : Unread messages
+4da041d - e.baidakova, 2025-02-08 : Chat implementation
+b493627 - e.baidakova, 2025-02-08 : Chat implementation
+6bebbb4 - e.baidakova, 2025-02-08 : Chat implementation on backend
+2fc44aa - e.baidakova, 2025-02-08 : Chat component
+42595f4 - e.baidakova, 2025-02-08 : Chat implementation
+5752ac6 - e.baidakova, 2025-02-08 : /requests/list test update
+c00c1e6 - e.baidakova, 2025-02-08 : Filter requests list by role
+d3269a1 - e.baidakova, 2025-02-08 : Added user's name in messages response
+1907627 - e.baidakova, 2025-02-07 : Simplified message by id response
+7f7da9b - e.baidakova, 2025-02-07 : Request preview
+90be07d - e.baidakova, 2025-02-07 : Added request archive on FE
+055bd43 - e.baidakova, 2025-02-07 : Added request completion on FE
+c86cd36 - e.baidakova, 2025-02-07 : Fixed toast component
+4c0b891 - e.baidakova, 2025-02-07 : Request actions
+3ae11df - e.baidakova, 2025-02-07 : Request actions
+64c0c5a - e.baidakova, 2025-02-07 : Request archive hook
+2e246cb - e.baidakova, 2025-02-07 : Request update hook
+5e36954 - e.baidakova, 2025-02-07 : Fixed login redirect error
+4f12095 - e.baidakova, 2025-02-07 : Request creation
+093bbc9 - e.baidakova, 2025-02-07 : Request creation
+8148fc5 - e.baidakova, 2025-02-07 : Week 15: Chat
+40d876d - e.baidakova, 2025-02-02 : Week 15: Chat
+4040d2f - e.baidakova, 2025-02-02 : Week 15: Chat
+b97b765 - e.baidakova, 2025-01-26 : Week 14: Request management frontend
+3aefc3f - e.baidakova, 2025-01-26 : Week 14: Request management frontend
+808b6da - e.baidakova, 2025-01-26 : Week 14: Request management frontend
+ed6fae5 - e.baidakova, 2025-01-26 : Week 14: Request management frontend
+8ec3574 - e.baidakova, 2025-01-26 : Week 14: Request management frontend
+3a97ac7 - e.baidakova, 2025-01-26 : Week 14: Request management frontend
+e0d95ab - e.baidakova, 2025-01-26 : Week 14: Request management frontend
+4cb567b - e.baidakova, 2025-01-26 : Week 14: Request management frontend
+504e9bd - e.baidakova, 2025-01-26 : Week 14: Request management frontend
+f188ae4 - e.baidakova, 2025-01-20 : Week 12-13: Request management backend
+2fa1f9c - e.baidakova, 2025-01-19 : Week 12-13: Request management backend - fixed problem with prettier
+8503a24 - e.baidakova, 2025-01-19 : Week 12-13: Request management backend
+419d1b2 - e.baidakova, 2025-01-19 : Week 12-13: Missing tests for user endpoints
+8f87e1c - e.baidakova, 2025-01-19 : Week 12-13: Request management backend
+77f378a - e.baidakova, 2025-01-19 : Week 12-13: Request management backend
+2594782 - e.baidakova, 2025-01-19 : week 11: Account page - add email confirmation
+20d336e - e.baidakova, 2024-12-29 : week 11: Account page - add email confirmation
+6a67533 - e.baidakova, 2024-12-22 : week 10: Authentication and basic setup - playwright tests setup
+1f43783 - e.baidakova, 2024-12-22 : week 10: Authentication and basic setup
+824057b - e.baidakova, 2024-12-22 : prettier setup
+5438c27 - e.baidakova, 2024-12-06 : mvp
+c31931c - e.baidakova, 2024-12-05 : mvp
+e0c5c6a - e.baidakova, 2024-12-05 : mvp
+adcf28a - e.baidakova, 2024-12-05 : mvp
+fc0f86c - e.baidakova, 2024-12-05 : mvp
+ae1f096 - e.baidakova, 2024-12-05 : mvp
+74302dd - e.baidakova, 2024-12-05 : mvp
+f8d0bb7 - e.baidakova, 2024-12-05 : mvp
+3436266 - e.baidakova, 2024-12-05 : mvp
+fe14771 - e.baidakova, 2024-12-05 : mvp
+328d8cd - e.baidakova, 2024-12-05 : mvp
+c0fd2c5 - e.baidakova, 2024-12-04 : mvp
+ec1c721 - e.baidakova, 2024-12-04 : mvp
+858af5f - e.baidakova, 2024-12-04 : mvp
+bfdcdd0 - e.baidakova, 2024-12-04 : mvp
+01814aa - e.baidakova, 2024-12-04 : mvp
+ad0a646 - e.baidakova, 2024-12-04 : mvp
+13f1dac - e.baidakova, 2024-12-04 : mvp
+975a1e3 - e.baidakova, 2024-12-04 : mvp
+d884237 - e.baidakova, 2024-12-03 : layout
+a0b5026 - e.baidakova, 2024-12-03 : layout
+150a3cc - e.baidakova, 2024-12-03 : react-query
+fc2922f - e.baidakova, 2024-12-03 : sidebar
+57e073a - e.baidakova, 2024-12-03 : sidebar
+455ea70 - e.baidakova, 2024-12-03 : init
+7a0226d - e.baidakova, 2024-12-03 : init
+36e07f9 - Elena Baidakova, 2024-11-10 : Initial commit

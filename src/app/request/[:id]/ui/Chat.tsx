@@ -89,41 +89,44 @@ export function ChatCard({ requestId }: ChatCardProps) {
 
       <CardContent>
         <ScrollArea scrollbars="vertical" style={{ maxHeight: 400 }}>
-          <div className="mr-7 space-y-5">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={cn(
-                  'flex w-max max-w-[75%] flex-col gap-1',
-                  message.senderId === currentUserId ? 'ml-auto' : ''
-                )}
-              >
-                <div>
-                  <Text size="1">
-                    {session?.user.name === message.senderName
-                      ? 'You'
-                      : message.senderName}
-                  </Text>
-                  {'  '}
-                  <Text size="1" color="gray">
-                    {formatMessageTimestamp(message.createdAt)}
-                  </Text>
-                </div>
+          <div className="w-full">
+            <div className="mr-7 space-y-5">
+              {messages.map((message, index) => (
                 <div
+                  key={index}
                   className={cn(
-                    'flex w-max flex-col gap-2 rounded-lg px-3 py-2 text-sm',
-                    message.senderId === currentUserId
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted'
+                    'flex max-w-[75%] flex-col gap-1',
+                    message.senderId === currentUserId ? 'ml-auto' : ''
                   )}
                 >
-                  {message.text}
+                  <div>
+                    <Text size="1">
+                      {session?.user.name === message.senderName
+                        ? 'You'
+                        : message.senderName}
+                    </Text>
+                    {'  '}
+                    <Text size="1" color="gray">
+                      {formatMessageTimestamp(message.createdAt)}
+                    </Text>
+                  </div>
+                  <div
+                    className={cn(
+                      'flex w-full flex-col gap-2 rounded-lg px-3 py-2 text-sm break-words',
+                      message.senderId === currentUserId
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted'
+                    )}
+                  >
+                    {message.text}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </ScrollArea>
       </CardContent>
+
       <CardFooter>
         <form
           onSubmit={(event) => {

@@ -3,6 +3,7 @@ import { POST } from './route';
 
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
+import { ROLES } from '@/constants/Role';
 
 vi.mock('next-auth', async (importOriginal) => {
   const original = await importOriginal<typeof import('next-auth')>();
@@ -21,6 +22,9 @@ vi.mock('@/lib/prisma', () => ({
       findUnique: vi.fn(),
     },
     requestUrgency: {
+      findUnique: vi.fn(),
+    },
+    requestStatus: {
       findUnique: vi.fn(),
     },
   },
@@ -56,7 +60,7 @@ describe('/api/requests/create', () => {
 
   it('should return 403 if the user does not have the SHELTER role', async () => {
     vi.mocked(getServerSession).mockResolvedValueOnce({
-      user: { id: '123', role: 'SUPPORTER' },
+      user: { id: '123', role: ROLES.SUPPORTER },
     });
 
     const response = await POST(
@@ -81,21 +85,47 @@ describe('/api/requests/create', () => {
     );
   });
 
+  it('should return 400 if required fields missing', async () => {
+    vi.mocked(getServerSession).mockResolvedValueOnce({
+      user: { id: '123', role: ROLES.SHELTER },
+    });
+
+    const response = await POST(
+      new Request('http://localhost:3000/api/requests/create', {
+        method: 'POST',
+        body: JSON.stringify({
+          title: '',
+          type: 'SUPPLIES',
+          urgency: 'HIGH',
+          details: '',
+          location: '',
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      })
+    );
+
+    const body = await response.json();
+    expect(response.status).toBe(400);
+    expect(body.message).toBe('All fields are required except dueDate');
+  });
+
   it('should return 201 if the request is successfully created', async () => {
     vi.mocked(getServerSession).mockResolvedValueOnce({
-      user: { id: '123', role: 'SHELTER' },
+      user: { id: '123', role: ROLES.SHELTER },
     });
 
     prisma.requestType.findUnique.mockResolvedValueOnce({ id: 'type-id' });
     prisma.requestUrgency.findUnique.mockResolvedValueOnce({
       id: 'urgency-id',
     });
+    prisma.requestStatus.findUnique.mockResolvedValueOnce({ id: 'status-id' });
 
     const mockRequest = {
       id: 'request-id-123',
       title: 'Need blankets',
       typeId: 'type-id',
       urgencyId: 'urgency-id',
+      statusId: 'status-id',
       dueDate: '2025-02-01T00:00:00.000Z',
       details: 'We need 100 blankets for the winter season.',
       location: 'New York',

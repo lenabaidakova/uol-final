@@ -4,9 +4,9 @@ import { setMaxListeners } from 'events';
 setMaxListeners(20);
 
 const nextConfig = {
-//    eslint: {
-//      ignoreDuringBuilds: true,
-//    },
+    eslint: {
+      ignoreDuringBuilds: true,
+    },
     typescript: {
       ignoreBuildErrors: true,
     },

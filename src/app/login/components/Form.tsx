@@ -10,6 +10,7 @@ import { Box, Button, Card, Flex, Heading, Link, Text } from '@radix-ui/themes';
 import { ErrorApi } from '@/app/ui/ErrorApi';
 import { appRoutes } from '@/lib/appRoutes';
 import RouterLink from 'next/link';
+import Logo from '@/app/ui/Logo';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -41,6 +42,9 @@ export default function LoginPage() {
 
   return (
     <Box m="auto" maxWidth="460px" py="3" px="2" mt="4">
+      <Box mb="2">
+        <Logo />
+      </Box>
       <Card size="4" variant="classic">
         <Heading mb="3">Welcome back</Heading>
 

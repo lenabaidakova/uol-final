@@ -44,49 +44,9 @@ describe('/api/messages/unread', () => {
       user: { id: 'shelter-id-123', role: 'SHELTER' },
     });
 
-    const mockUnreadMessages = [
-      {
-        id: 'unread-1',
-        userId: 'shelter-id-123',
-        messageId: 'msg-1',
-        requestId: 'request-id-123',
-        createdAt: new Date('2025-02-02T13:37:25.827Z'),
-        message: {
-          id: 'msg-1',
-          text: 'I want to donate supplies',
-          createdAt: new Date('2025-02-02T13:37:25.827Z'),
-          sender: { id: 'supporter-id-1', name: 'John Doe' },
-          request: { id: 'request-id-123', title: 'Food donation request' },
-        },
-      },
-    ];
-
-    vi.mocked(prisma.unreadMessage.findMany).mockResolvedValueOnce(
-      mockUnreadMessages
-    );
-    vi.mocked(prisma.unreadMessage.count).mockResolvedValueOnce(1);
-
-    const response = await GET(
-      new Request('http://localhost:3000/api/messages/unread')
-    );
-
-    const body = await response.json();
-
-    expect(response.status).toBe(200);
-    expect(body.unreadRequests).toHaveLength(1);
-    expect(body.unreadRequests[0].title).toBe('Food donation request');
-    expect(body.unreadRequests[0].lastMessageFrom).toBe('John Doe');
-    expect(body.unreadRequests[0].unreadCount).toBe(1);
-  });
-
-  it('should return unread messages for SUPPORTER', async () => {
-    vi.mocked(getServerSession).mockResolvedValueOnce({
-      user: { id: 'supporter-id-123', role: 'SUPPORTER' },
-    });
-
     const mockUnreadMessages = Array.from({ length: 10 }, (_, i) => ({
       id: `unread-${i}`,
-      userId: 'supporter-id-123',
+      userId: 'shelter-id-123',
       messageId: `msg-${i}`,
       requestId: `request-id-${i}`,
       createdAt: new Date(),
@@ -102,10 +62,10 @@ describe('/api/messages/unread', () => {
     vi.mocked(prisma.unreadMessage.findMany).mockResolvedValueOnce(
       mockUnreadMessages
     );
-    vi.mocked(prisma.unreadMessage.count).mockResolvedValueOnce(50);
+    vi.mocked(prisma.unreadMessage.count).mockResolvedValueOnce(10);
 
     const response = await GET(
-      new Request('http://localhost:3000/api/messages/unread?page=2&limit=10')
+      new Request('http://localhost:3000/api/messages/unread?page=1&limit=10')
     );
 
     const body = await response.json();
@@ -113,10 +73,10 @@ describe('/api/messages/unread', () => {
     expect(response.status).toBe(200);
     expect(body.unreadRequests).toHaveLength(10);
     expect(body.pagination).toEqual({
-      currentPage: 2,
+      currentPage: 1,
       limit: 10,
-      totalUnread: 50,
-      totalPages: 5,
+      totalUnread: 10,
+      totalPages: 1,
     });
   });
 

@@ -1,6 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const bcrypt = require('bcrypt');
+const { subDays } = require('date-fns');
 
 async function main() {
   console.log('Seeding database...');
@@ -289,6 +290,7 @@ async function main() {
         details: template.details,
         location: locations[index % locations.length],
         creatorId: shelters[index % shelters.length].id,
+        createdAt: subDays(new Date(), Math.floor(Math.random() * 180)),
         assignedToId,
       },
     });

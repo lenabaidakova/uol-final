@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GET } from './route';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
+import { ROLES } from '@/constants/Role';
 
 vi.mock('next-auth', async (importOriginal) => {
   const original = await importOriginal<typeof import('next-auth')>();
@@ -40,20 +41,20 @@ describe('/api/requests/list', () => {
 
   it('should return all requests if the user is a SUPPORTER', async () => {
     vi.mocked(getServerSession).mockResolvedValueOnce({
-      user: { id: 'supporter-id-123', role: 'SUPPORTER' },
+      user: { id: 'supporter-id-123', role: ROLES.SUPPORTER },
     });
 
     const mockRequests = Array.from({ length: 10 }, (_, i) => ({
       id: `request-id-${i}`,
       title: `Request title ${i}`,
-      type: 'SUPPLIES',
-      urgency: 'HIGH',
+      type: { name: 'SUPPLIES' },
+      urgency: { name: 'HIGH' },
+      status: { name: 'PENDING' },
       dueDate: null,
       details: `Request details ${i}`,
       location: 'Test location',
-      status: 'PENDING',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      creatorId: `creator-id-${i}`,
+      creator: { id: `creator-id-${i}`, name: `Shelter ${i}` },
     }));
 
     prisma.request.findMany.mockResolvedValueOnce(mockRequests);
@@ -71,20 +72,19 @@ describe('/api/requests/list', () => {
 
   it("should return only the shelter's own requests if the user is a SHELTER", async () => {
     vi.mocked(getServerSession).mockResolvedValueOnce({
-      user: { id: 'shelter-id-123', role: 'SHELTER' },
+      user: { id: 'shelter-id-123', role: ROLES.SHELTER },
     });
 
     const mockRequests = [
       {
         id: 'request-id-1',
         title: "Shelter's own request",
-        type: 'SUPPLIES',
-        urgency: 'MEDIUM',
+        type: { name: 'SUPPLIES' },
+        urgency: { name: 'MEDIUM' },
+        status: { name: 'PENDING' },
         location: 'Los Angeles',
-        status: 'PENDING',
         creatorId: 'shelter-id-123',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        creator: { id: 'shelter-id-123', name: 'Shelter A' },
       },
     ];
 
@@ -102,23 +102,23 @@ describe('/api/requests/list', () => {
     expect(body.requests[0].creatorId).toBe('shelter-id-123');
   });
 
-  it('should return filtered requests by location for a SUPPORTER', async () => {
+  it('should return filtered requests by text search for a SUPPORTER', async () => {
     vi.mocked(getServerSession).mockResolvedValueOnce({
-      user: { id: 'supporter-id-123', role: 'SUPPORTER' },
+      user: { id: 'supporter-id-123', role: ROLES.SUPPORTER },
     });
 
     const mockRequests = [
       {
         id: 'request-id-1',
         title: 'Food donation needed',
-        type: 'SUPPLIES',
-        urgency: 'MEDIUM',
+        type: { name: 'SUPPLIES' },
+        urgency: { name: 'MEDIUM' },
+        status: { name: 'PENDING' },
         dueDate: null,
         details: 'Request details 1',
         location: 'Chicago',
-        status: 'PENDING',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        creatorId: 'creator-id-1',
+        creator: { id: 'creator-id-1', name: 'Shelter A' },
       },
     ];
 

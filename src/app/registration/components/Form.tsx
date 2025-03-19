@@ -13,6 +13,7 @@ import { useState } from 'react';
 import { Callout } from '@/app/ui/Callout';
 import RouterLink from 'next/link';
 import { appRoutes } from '@/lib/appRoutes';
+import Logo from '@/app/ui/Logo';
 
 const ROLE_OPTIONS = [
   {
@@ -78,6 +79,9 @@ export default function RegisterPage() {
 
   return (
     <Box m="auto" maxWidth="460px" py="3" px="2" mt="4">
+      <Box mb="2">
+        <Logo />
+      </Box>
       <Card size="4" variant="classic">
         <Heading mb="3">Create an account</Heading>
 
