@@ -96,23 +96,24 @@ export function ChatCard({ requestId }: ChatCardProps) {
                   key={index}
                   className={cn(
                     'flex max-w-[75%] flex-col gap-1',
-                    message.senderId === currentUserId ? 'ml-auto' : ''
+                    message.senderId === currentUserId
+                      ? 'ml-auto items-end'
+                      : 'items-start'
                   )}
                 >
-                  <div>
+                  <div className="flex items-center gap-2">
                     <Text size="1">
                       {session?.user.name === message.senderName
                         ? 'You'
                         : message.senderName}
                     </Text>
-                    {'  '}
                     <Text size="1" color="gray">
                       {formatMessageTimestamp(message.createdAt)}
                     </Text>
                   </div>
                   <div
                     className={cn(
-                      'flex w-full flex-col gap-2 rounded-lg px-3 py-2 text-sm break-words',
+                      'inline-block max-w-full flex-col gap-2 rounded-lg px-3 py-2 text-sm break-words',
                       message.senderId === currentUserId
                         ? 'bg-primary text-primary-foreground'
                         : 'bg-muted'

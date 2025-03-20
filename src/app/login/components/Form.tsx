@@ -34,7 +34,7 @@ export default function LoginPage() {
     onSuccess: () => {
       setTimeout(() => {
         router.push('/');
-      }, 200); // give some time to set cookie, can be too fast on prod
+      }, 400); // give some time to set cookie, can be too fast on prod
     },
   });
 
