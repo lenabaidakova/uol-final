@@ -32,7 +32,9 @@ export default function LoginPage() {
 
   const { mutate, isMutating, error } = useLogin({
     onSuccess: () => {
-      router.push('/');
+      setTimeout(() => {
+        router.push('/');
+      }, 200); // give some time to set cookie, can be too fast on prod
     },
   });
 
