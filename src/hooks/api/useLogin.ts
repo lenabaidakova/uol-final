@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { signIn } from 'next-auth/react';
+import { getSession, signIn } from 'next-auth/react';
 import type { MutationOptions } from '@tanstack/react-query';
 
 export type LoginData = {
@@ -26,6 +26,8 @@ const loginUser = async (data: LoginData): Promise<LoginResponse> => {
   if (result.error) {
     throw new Error(result.error);
   }
+
+  await getSession();
 
   return { ok: true };
 };
