@@ -13,7 +13,7 @@ import { ChatCard } from '@/app/request/[:id]/ui/Chat';
 import RequestDropdownActions from '@/app/ui/RequestDropdownActions';
 import { usePathname } from 'next/navigation';
 import { useRequestById } from '@/hooks/api/useRequestById';
-import { URGENCY_LABELS } from '@/constants/Request';
+import { REQUEST_STATUS, URGENCY_LABELS } from '@/constants/Request';
 import * as React from 'react';
 import { format } from 'date-fns';
 import { ErrorApi } from '@/app/ui/ErrorApi';
@@ -76,7 +76,10 @@ export default function RequestViewBody() {
         <Flex align="center" gap="5">
           <RequestStatusBadge status={request.status} />
 
-          {role === ROLES.SUPPORTER && <TakeInProgress requestId={requestId} />}
+          {role === ROLES.SUPPORTER &&
+            request.status === REQUEST_STATUS.PENDING && (
+              <TakeInProgress requestId={requestId} />
+            )}
         </Flex>
       </PageHeader>
 

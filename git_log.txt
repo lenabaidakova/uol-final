@@ -1,4 +1,9 @@
-7ea218a - e.baidakova, 2025-03-19 : Final recheck/fixes before submission
+bd17d39 - e.baidakova, 2025-03-20 : Final fix
+854e8b7 - e.baidakova, 2025-03-20 : Fixing unstable redirect on login
+36412dc - e.baidakova, 2025-03-20 : Styles fix
+ca20340 - e.baidakova, 2025-03-20 : Redirect fix on prod
+f0340df - e.baidakova, 2025-03-20 : Host update
+4cb4116 - e.baidakova, 2025-03-19 : Final recheck/fixes before submission
 bf27a28 - e.baidakova, 2025-03-18 : Improved seed script for demo
 cee32e2 - e.baidakova, 2025-03-18 : Final recheck/fixes before submission
 67f37b6 - e.baidakova, 2025-03-18 : Updated project Readme

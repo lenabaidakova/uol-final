@@ -40,6 +40,7 @@ export type RequestListQuery = {
   urgency?: string;
   status?: string;
   location?: string;
+  type?: string;
 };
 
 const fetchRequestList = async (
@@ -54,6 +55,7 @@ const fetchRequestList = async (
     urgency = '',
     status = '',
     location = '',
+    type = '',
   } = query;
 
   return apiClient.get('/requests/list', {
@@ -66,6 +68,7 @@ const fetchRequestList = async (
       urgency,
       status,
       location,
+      type,
     },
   });
 };

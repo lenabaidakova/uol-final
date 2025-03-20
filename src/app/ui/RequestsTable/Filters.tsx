@@ -7,7 +7,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { REQUEST_STATUS, URGENCY } from '@/constants/Request';
+import {
+  REQUEST_STATUS,
+  REQUEST_TYPE,
+  REQUEST_TYPE_LABELS,
+  URGENCY,
+} from '@/constants/Request';
 import { DatePickerWithRange } from '@/app/ui/DatePickerWithRange';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
@@ -29,6 +34,7 @@ export default function Filters({ setQuery, query }: FiltersProps) {
   const [title, setTitle] = React.useState('');
   const [urgency, setUrgency] = React.useState('');
   const [status, setStatus] = React.useState('');
+  const [type, setType] = React.useState('');
   const [location, setLocation] = React.useState('');
 
   const debouncedSearch = useDebounceCallback((newText: string) => {
@@ -50,6 +56,11 @@ export default function Filters({ setQuery, query }: FiltersProps) {
     setQuery({ ...query, status: value, page: 1 });
   };
 
+  const handleTypeChange = (value: string) => {
+    setType(value);
+    setQuery({ ...query, type: value, page: 1 });
+  };
+
   const handleLocationChange = (value: string) => {
     setLocation(value);
     setQuery({ ...query, location: value, page: 1 });
@@ -60,6 +71,7 @@ export default function Filters({ setQuery, query }: FiltersProps) {
     setTitle('');
     setUrgency('');
     setStatus('');
+    setType('');
     setLocation('');
 
     const updatedQuery = { page: 1, limit: 5 };
@@ -118,6 +130,25 @@ export default function Filters({ setQuery, query }: FiltersProps) {
                 Completed
               </SelectItem>
               <SelectItem value={REQUEST_STATUS.ARCHIVED}>Archived</SelectItem>
+            </SelectContent>
+          </Select>
+        </Box>
+
+        <Box>
+          <Select onValueChange={handleTypeChange} value={type}>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Filter by type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={REQUEST_TYPE.SUPPLIES}>
+                {REQUEST_TYPE_LABELS.SUPPLIES.label}
+              </SelectItem>
+              <SelectItem value={REQUEST_TYPE.SERVICES}>
+                {REQUEST_TYPE_LABELS.SERVICES.label}
+              </SelectItem>
+              <SelectItem value={REQUEST_TYPE.VOLUNTEERS}>
+                {REQUEST_TYPE_LABELS.VOLUNTEERS.label}
+              </SelectItem>
             </SelectContent>
           </Select>
         </Box>
