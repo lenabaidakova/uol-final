@@ -7,7 +7,13 @@ export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request });
 
   // public routes
-  const publicPaths = ['/login', '/registration', '/public/:path*', '/docs'];
+  const publicPaths = [
+    '/login',
+    '/registration',
+    '/registration/confirmation',
+    '/public/:path*',
+    '/docs',
+  ];
 
   // routes restricted for supporter
   const restrictedPathsForSupporters = [

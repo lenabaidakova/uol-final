@@ -5,7 +5,7 @@ for supplies, services, and volunteers, while supporters can respond and communi
 
 ## Production Deployment
 
-- **Hosted application:** [https://keebeex.com](https://keebeex.com)
+- **Hosted application:** [http://keebeex.com:3000/](http://keebeex.com:3000/)
 - **Email service:** [Brevo](https://www.brevo.com/)
 
 ### **Test accounts in production**
